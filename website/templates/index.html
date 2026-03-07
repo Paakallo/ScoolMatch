@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ScoolMatch</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+
+    <style>
+        body {
+            overflow-x: hidden;
+            background-color: #f8f9fa;
+        }
+
+        #wrapper { transition: all 0.3s ease; }
+
+        #sidebar-wrapper {
+            min-height: 100vh;
+            width: 250px;
+            transition: all 0.3s ease;
+            background-color: #ffffff;
+            border-right: 1px solid #dee2e6;
+        }
+
+        #wrapper.toggled #sidebar-wrapper {
+            margin-left: -250px;
+        }
+
+        #page-content-wrapper {
+            width: 100%;
+            transition: all 0.3s ease;
+        }
+
+        .list-group-item {
+            border: none;
+            padding: 15px 20px;
+            font-weight: 500;
+            cursor: pointer;
+        }
+
+        .list-group-item:hover {
+            background-color: #f1f3f5;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="d-flex" id="wrapper">
+
+        <div id="sidebar-wrapper">
+            <div class="sidebar-heading d-flex justify-content-between align-items-center p-3 border-bottom">
+                <div class="d-flex align-items-center">
+                    <i class="bi bi-person-circle fs-2 text-primary"></i>
+                    <span class="ms-2 fw-bold">Twój Profil</span>
+                </div>
+                <button class="btn btn-light btn-sm" id="close-menu-toggle" title="Schowaj panel">
+                    <i class="bi bi-layout-sidebar"></i>
+                </button>
+            </div>
+
+            <div class="list-group list-group-flush mt-3">
+                <a href="#" class="list-group-item list-group-item-action d-flex align-items-center module-link" data-module="QA.html">
+                    <i class="bi bi-patch-question me-2"></i> QA (Poznaj siebie)
+                </a>
+                <a href="#" class="list-group-item list-group-item-action d-flex align-items-center module-link" data-module="olimpiady.html">
+                    <i class="bi bi-trophy me-2"></i> Olimpiady
+                </a>
+                <a href="#" class="list-group-item list-group-item-action d-flex align-items-center module-link" data-module="kariera.html">
+                    <i class="bi bi-briefcase me-2"></i> Zasmakuj kariery
+                </a>
+                <a href="#" class="list-group-item list-group-item-action d-flex align-items-center module-link" data-module="szkoly.html">
+                    <i class="bi bi-building me-2"></i> Lista szkół
+                </a>
+                <a href="#" class="list-group-item list-group-item-action d-flex align-items-center module-link" data-module="harmonogram.html">
+                    <i class="bi bi-calendar-check me-2"></i> Harmonogram
+                </a>
+            </div>
+        </div>
+
+        <div id="page-content-wrapper">
+            <nav class="navbar navbar-light bg-light border-bottom p-3">
+                <button class="btn btn-primary" id="open-menu-toggle">
+                    <i class="bi bi-list"></i> Menu
+                </button>
+            </nav>
+
+            <div id="dynamic-content" class="container-fluid p-5">
+                <h1 class="display-4 fw-bold text-primary">ScoolMatch</h1>
+                <p class="lead">Wspierane przez fundację "Dom na Skraju" <3</p>
+                <p>Wybierz moduł z menu po lewej stronie, aby rozpocząć.</p>
+            </div>
+        </div>
+
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        // Obsługa otwierania/zamykania menu
+        const wrapper = document.getElementById("wrapper");
+        const openToggle = document.getElementById("open-menu-toggle");
+        const closeToggle = document.getElementById("close-menu-toggle");
+
+        openToggle.addEventListener("click", (e) => {
+            e.preventDefault();
+            wrapper.classList.toggle("toggled");
+        });
+
+        closeToggle.addEventListener("click", (e) => {
+            e.preventDefault();
+            wrapper.classList.toggle("toggled");
+        });
+
+        // --- SYSTEM ŁADOWANIA MODUŁÓW ---
+        const moduleLinks = document.querySelectorAll('.module-link');
+        const contentContainer = document.getElementById('dynamic-content');
+
+        moduleLinks.forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                const moduleFile = this.getAttribute('data-module');
+
+                // Opcjonalnie: ukryj menu na urządzeniach mobilnych po kliknięciu
+                if(window.innerWidth < 768) { wrapper.classList.add("toggled"); }
+
+                if (moduleFile) {
+                    loadModule(moduleFile);
+                }
+            });
+        });
+
+        function loadModule(url) {
+            contentContainer.innerHTML = '<div class="text-center mt-5"><div class="spinner-border text-primary" role="status"></div><p class="mt-2">Ładowanie...</p></div>';
+
+            fetch(url)
+                .then(response => {
+                    if (!response.ok) throw new Error("Nie znaleziono modułu.");
+                    return response.text();
+                })
+                .then(html => {
+                    contentContainer.innerHTML = html;
+                    executeScripts(contentContainer);
+                })
+                .catch(error => {
+                    console.error("Błąd:", error);
+                    contentContainer.innerHTML = `<div class="alert alert-danger mt-4">Błąd ładowania: ${error.message} Upewnij się, że korzystasz z serwera lokalnego (np. Live Server).</div>`;
+                });
+        }
+
+        // Funkcja do uruchamiania skryptów wewnątrz załadowanego HTML-a
+        function executeScripts(element) {
+            const scripts = element.querySelectorAll("script");
+            scripts.forEach(oldScript => {
+                const newScript = document.createElement("script");
+                Array.from(oldScript.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value));
+                newScript.appendChild(document.createTextNode(oldScript.innerHTML));
+                oldScript.parentNode.replaceChild(newScript, oldScript);
+            });
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,180 @@
+<style>
+    .question-card { transition: transform 0.2s; }
+    .question-card:hover { transform: translateY(-2px); }
+    .sticky-progress { position: sticky; top: 0; z-index: 1000; background: #f8f9fa; padding: 10px 0; border-bottom: 1px solid #dee2e6; margin-bottom: 20px;}
+</style>
+
+<div class="sticky-progress mx-n5 px-5">
+    <div class="container" style="max-width: 800px;">
+        <div class="d-flex justify-content-between small text-muted mb-1">
+            <span>Postęp:</span>
+            <span id="progress-text">0 / 90</span>
+        </div>
+        <div class="progress" style="height: 10px;">
+            <div id="progress-bar" class="progress-bar bg-success" role="progressbar" style="width: 0%;"></div>
+        </div>
+    </div>
+</div>
+
+<div class="container py-3" style="max-width: 800px;">
+    <div class="text-center mb-5">
+        <h1 class="display-5 fw-bold text-primary">Poznaj siebie!</h1>
+        <p class="lead text-muted">Zaznacz opcję "Zgadzam się" przy stwierdzeniach, które do Ciebie pasują.</p>
+    </div>
+
+    <form action="/oblicz-wynik" method="POST" id="holland-form">
+        <div id="questions-container"></div>
+
+        <div class="d-grid gap-2 mt-5">
+            <button type="submit" class="btn btn-primary btn-lg py-3 rounded-pill shadow">
+                Zakończ test i zobacz wyniki
+            </button>
+        </div>
+    </form>
+</div>
+
+<script>
+    // Wewnątrz modułu używamy IIFE (Immediately Invoked Function Expression),
+    // aby zapobiec konfliktom zmiennych, jeśli użytkownik kliknie moduł kilka razy.
+    (function() {
+        const questions = [
+            "Posiadanie silnego i zgrabnego ciała jest dla mnie ważną sprawą.",
+            "Staram się dogłębnie zrozumieć rzeczy.",
+            "Muzyka, kolory, piękno każdego rodzaju może wpłynąć na moje usposobienie.",
+            "Ludzie wzbogacają moje życie i nadają mu sens.",
+            "Wierze w siebie, w to, że mam wpływ na rzeczy.",
+            "Docenia jasno wytyczone kierunki działania, które dokładnie określają, co mam robić.",
+            "Zwykle potrafię budować, nosić wszystko sam, sam dawać sobie radę.",
+            "Mogę godzinami myśleć o czymś.",
+            "Doceniam piękne otoczeni. Kolory i formy znaczą dla mnie bardzo dużo.",
+            "Kocham towarzystwo.",
+            "Lubię rywalizację.",
+            "Muszę mieć najpierw uporządkowane zaplecze, i dopiero potem rozpocząć prace nad projektem.",
+            "Lubię pracować rękami.",
+            "Badanie nowych idei daje mi zadowolenie.",
+            "Zawsze poszukuję nowych sposobów, by dać wyraz moim twórczym zdolnościom.",
+            "Doceniam możliwość dzielenia moich osobistych spraw z innymi.",
+            "To, że jestem najważniejszą osobą w grupie, daje mi zadowolenie.",
+            "Jest dla mnie sprawą honoru, by dbać o wszystkie szczegóły w mojej pracy.",
+            "Nie przeszkadza mi, że zabrudzę ręce w czasie pracy.",
+            "Wykształcenie jest dla mnie nieustającym procesem rozwijania i wyostrzania mojego sposobu myślenia.",
+            "Lubię ubierać się nietradycyjne i próbować nowe kierunki mody i kolory.",
+            "Często wyczuwam, kiedy jakaś osoba odczuwa potrzebę rozmowy.",
+            "Lubię organizować ludzi i dawać impuls do pracy.",
+            "Rutyna pomaga mi w ukończeniu pracy.",
+            "Lubię kupować rzeczy, które są punktem wyjścia do dalszej pracy.",
+            "Czasami mogę siedzieć godzinami i pracować nad rozwiązaniem problemów, czytać lub myśleć o życiu.",
+            "Potrafię wyobrazić sobie rzeczy.",
+            "Czuję się dobrze, kiedy zajmuję się innymi ludźmi.",
+            "Lubię, gdy dają mi kredyt zaufania w pracy.",
+            "Jestem podbudowany, wiedząc że dobrze i starannie rozwiązałem powierzone zadanie.",
+            "Chciałbym najchętniej być sobą i wykonywać rzeczy praktyczne, pracować rękami.",
+            "Chętnie czytam książki na jakikolwiek z tematów, który budzi moją ciekawość.",
+            "Lubię wprowadzać w życie nowe pomysły.",
+            "W sytuacji, gdy mam jakieś problemy z innymi, preferuje rozmowę i znalezienie rozwiązania.",
+            "Żeby osiągnąć sukces należy mierzyć wysoko.",
+            "Lubię sytuację, które wymagają ode mnie podejmowania decyzji i brania za nie odpowiedzialności.",
+            "Lubię dyskutować.",
+            "Analizuję dany problem gruntownie, zanim podejmę działania.",
+            "Lubię zmieniać otoczeni tak, by uczynić je czymś innym i specjalnym.",
+            "Kiedy jest mi przykro znajduję przyjaciela, by z nim porozmawiać.",
+            "Kiedy proponuję plan, wolę, żeby inni zajmowali się szczegółami.",
+            "Zwykle jestem zadowolony z miejsca, gdzie przebywam.",
+            "Praca na świeżym powietrzu dostarcza mi nowego zasobu energii.",
+            "Bez przerwy zadaję pytanie. „Dlaczego?\"",
+            "Podoba mi się, że moja praca jest wyrazem mojego nastroju i uczuć.",
+            "Lubię znajdować sposoby pomagania ludziom, by bardziej byli ludzcy wobec siebie.",
+            "Branie udziału w podejmowaniu ważnych decyzji jest niezmiernie ciekawe.",
+            "Zawsze cieszę się, gdy ktoś inny przejmuje kierownictwo.",
+            "Lubię, gdy moje otoczenie jest proste i praktyczne.",
+            "Roztrząsam problem, dopóki nie znajdę odpowiedzi.",
+            "Piękno natury porusza coś ukrytego we mnie.",
+            "Bliskie stosunki z innymi są ważne dla mnie.",
+            "Lepsze stanowisko i awans są ważne dla mnie.",
+            "Efektywność to coś dla mnie: pracować określoną ilość godzin każdego dnia.",
+            "Dla uniknięcia chaosu potrzebny jest silny system z ustalonym prawem i porządkiem.",
+            "Książki zmuszające do myślenia zawsze poszerzają moje horyzonty.",
+            "Bardzo cieszę się z możliwości pójścia na wystawę, do teatru czy do kina.",
+            "Nie widziałem cię długi czas, powiedz co u ciebie.",
+            "Niezmiernie ciekawą rzeczą jest możliwość wpływania na innych ludzi.",
+            "Kiedy przyrzekam, że coś zrobię, wykonuję to do najdrobniejszego szczegółu.",
+            "Solidna, fizyczna i twarda praca nikomu nie zaszkodzi.",
+            "Chciałbym nauczyć się wszystkiego, co jest dostępne o tematach, które mnie interesują.",
+            "Nie chcę być jak inni, lubię robić rzeczy inaczej.",
+            "Powiedz mi jak ci mogę pomóc.",
+            "Jestem gotów podjąć ryzyko, by kontynuować sprawy dalej.",
+            "Lubię jasne i precyzyjne linie postępowania, kiedy coś zaczynam.",
+            "Pierwsze, co widzę w samochodzie to doby silnik.",
+            "Ci ludzie działają stymulująco na mój intelekt.",
+            "Kiedy się czymś się zajmuję, mam tendencję do zapominania o całym świecie.",
+            "Martwi mnie, że jest tyle ludzi w naszym społeczeństwie, którzy potrzebują pomocy.",
+            "Zabawne jest podsuwać innym ludziom pomysły.",
+            "Nie znoszę, kiedy ktoś bez przerwy zmienia metodę, kiedy akurat kończę pisanie pracy.",
+            "Zwykle znajduje wyjście w sytuacjach „podbramkowych\".",
+            "Nawet samo czytanie o odkryciach jest ciekawe.",
+            "Lubię robić happeningi.",
+            "Zawsze staram się jak mogę, by okazać uwagę ludziom, którzy wyglądają na samotnych i bez przyjaciół.",
+            "Lubię działać.",
+            "Nie lubię robić rzeczy, które nie są zatwierdzone.",
+            "Sport jest ważny, jeśli ciało ma być zdrowe.",
+            "Sposób funkcjonowania natury budził zawsze moją ciekawość.",
+            "Zabawne jest być w dobrym humorze i robić coś nadzwyczajnego.",
+            "Sądzę, że ludzie w głębi duszy są dobrzy.",
+            "Jeśli nie daję sobie rady za pierwszym razem, rozpoczynam jeszcze raz z nową energią i entuzjazmem.",
+            "Cenię wysoko sytuację, kiedy wiem czego inni ode mnie oczekują.",
+            "Lubię podzielić rzeczy na czynniki pierwsze, by zobaczyć czy dam sobie radę.",
+            "Nie denerwuj się. Możemy przemyśleć sprawę i zaplanować następny krok.",
+            "Byłoby dla mnie trudno wyobrazić sobie moje życie bez pięknych rzeczy wokół mnie.",
+            "Często tak się dziej, że inni przychodzą do mnie by opowiedzieć o swoich problemach.",
+            "Zwykle nawiązuję kontakt z ludźmi, którzy mogą pokazać mi drogę do nowych możliwości.",
+            "Nie potrzebuje dużo, by być szczęśliwym."
+        ];
+
+        const categories = ['R', 'B', 'A', 'S', 'P', 'K'];
+        const container = document.getElementById('questions-container');
+        let htmlContent = '';
+
+        questions.forEach((q, index) => {
+            const i = index + 1;
+            const category = categories[index % 6];
+
+            htmlContent += `
+            <div class="card shadow-sm mb-3 question-card border-0">
+                <div class="card-body d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
+                    <span class="fs-5 text-dark">
+                        <strong>${i}.</strong> ${q}
+                    </span>
+                    <div class="btn-group flex-shrink-0" role="group">
+                        <input type="radio" class="btn-check answer-btn" name="${category}_q${i}" id="q${i}_yes" value="tak">
+                        <label class="btn btn-outline-success" for="q${i}_yes">Zgadzam się</label>
+
+                        <input type="radio" class="btn-check answer-btn" name="${category}_q${i}" id="q${i}_no" value="nie" checked>
+                        <label class="btn btn-outline-secondary" for="q${i}_no">Nie zgadzam się</label>
+                    </div>
+                </div>
+            </div>
+            `;
+        });
+
+        if(container) {
+            container.innerHTML = htmlContent;
+        }
+
+        const allRadioButtons = document.querySelectorAll('.answer-btn');
+        const progressBar = document.getElementById('progress-bar');
+        const progressText = document.getElementById('progress-text');
+        const totalQuestions = questions.length;
+
+        allRadioButtons.forEach(radio => {
+            radio.addEventListener('change', () => {
+                const answeredYes = document.querySelectorAll('.answer-btn[value="tak"]:checked').length;
+                const percentage = (answeredYes / totalQuestions) * 100;
+
+                if(progressBar && progressText) {
+                    progressBar.style.width = percentage + '%';
+                    progressText.innerText = `${answeredYes} z ${totalQuestions} pytań pasuje do Ciebie`;
+                }
+            });
+        });
+    })();
+</script>
