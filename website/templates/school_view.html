@@ -1,0 +1,172 @@
+<div class="container py-4">
+    <h2 class="mb-4">Szkoły średnie w Gdańsku</h2>
+
+    <!-- Przycisk filtrowania -->
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#filterModal">
+            <i class="bi bi-funnel-fill"></i> Filtruj
+        </button>
+    </div>
+
+    <!-- Lista szkół -->
+    <ul class="list-group" id="schoolsList">
+        {% if schools %}
+            {% for school in schools %}
+            <li class="list-group-item">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <strong>{{ school.nazwa }}</strong>
+                        <div class="small text-muted mt-1">
+                            <span class="badge bg-secondary">{{ school.typ }}</span>
+                            {% if school.internat %}
+                                <span class="badge bg-success">Internat</span>
+                            {% else %}
+                                <span class="badge bg-danger">Bez internatu</span>
+                            {% endif %}
+                        </div>
+                        <div class="small text-muted mt-2">
+                            <strong>Specjalności:</strong> {{ school.specjalnosci }}
+                        </div>
+                    </div>
+                    <div class="text-end">
+                        <small class="text-muted">{{ school.odleglosc }} km</small>
+                    </div>
+                </div>
+            </li>
+            {% endfor %}
+        {% else %}
+            <li class="list-group-item text-muted">Brak szkół do wyświetlenia. Dodaj szkoły do bazy danych.</li>
+        {% endif %}
+    </ul>
+</div>
+
+<!-- Modal filtrowania -->
+<div class="modal fade" id="filterModal" tabindex="-1" aria-labelledby="filterModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="filterModalLabel">Filtruj szkoły</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="filterForm">
+                    <div class="mb-3">
+                        <label for="typeFilter" class="form-label">Rodzaj szkoły</label>
+                        <select class="form-select" id="typeFilter" name="type">
+                            <option value="">Wszystkie</option>
+                            <option value="Liceum">Liceum</option>
+                            <option value="Technikum">Technikum</option>
+                            <option value="Szkoła zawodowa">Szkoła zawodowa</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="dormitoryFilter" class="form-label">Szkoła z internatem</label>
+                        <select class="form-select" id="dormitoryFilter" name="dormitory">
+                            <option value="">Wszystkie</option>
+                            <option value="Tak">Tak</option>
+                            <option value="Nie">Nie</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Specjalności</label>
+                        <button type="button" class="btn btn-outline-secondary w-100" id="specialtyButton" onclick="toggleSpecialties()">
+                            Wybierz specjalności
+                        </button>
+                        <div id="specialtyList" class="mt-2" style="display: none; max-height: 200px; overflow-y: auto;">
+                            <!-- Specjalności będą ładowane dynamicznie -->
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="distanceFilter" class="form-label">Odległość od centrum Gdańska (km): <span id="distanceValue">10</span></label>
+                        <input type="range" class="form-range" id="distanceFilter" name="distance" min="0" max="50" value="10" step="1" oninput="updateDistanceValue(this.value)">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Anuluj</button>
+                <button type="button" class="btn btn-primary" onclick="applyFilters()">Zastosuj</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function updateDistanceValue(value) {
+        document.getElementById('distanceValue').textContent = value;
+    }
+
+    function applyFilters() {
+        const formElement = document.getElementById('filterForm');
+
+        // Zbieramy zaznaczone specjalności
+        const selectedSpecialties = [];
+        const specialtyCheckboxes = document.querySelectorAll('#specialtyList input[type="checkbox"]:checked');
+        specialtyCheckboxes.forEach(checkbox => {
+            selectedSpecialties.push(checkbox.value);
+        });
+
+        const formData = {
+            type: document.getElementById('typeFilter').value,
+            specialties: selectedSpecialties,
+            dormitory: document.getElementById('dormitoryFilter').value,
+            distance: document.getElementById('distanceFilter').value
+        };
+
+        // Wysyłamy AJAX request do backendu
+        fetch('/filter-schools', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(formData)
+        })
+        .then(response => response.json())
+        .then(data => {
+            // Aktualizujemy listę szkół na stronie
+            document.getElementById('schoolsList').innerHTML = data.html;
+            // Zamykamy modal
+            const modal = bootstrap.Modal.getInstance(document.getElementById('filterModal'));
+            if (modal) modal.hide();
+        })
+        .catch(error => {
+            console.error('Błąd:', error);
+            alert('Błąd podczas filtrowania. Spróbuj ponownie.');
+        });
+    }
+
+    function toggleSpecialties() {
+        const specialtyList = document.getElementById('specialtyList');
+        specialtyList.style.display = specialtyList.style.display === 'none' || specialtyList.style.display === '' ? 'block' : 'none';
+
+        // Jeśli lista specjalności ma być widoczna, załaduj specjalności z serwera
+        if (specialtyList.style.display === 'block') {
+            fetch('/get-specialties')
+                .then(response => response.json())
+                .then(data => {
+                    specialtyList.innerHTML = '';
+                    data.specialties.forEach(specialty => {
+                        const div = document.createElement('div');
+                        div.className = 'form-check';
+                        div.innerHTML = `
+                            <input class="form-check-input" type="checkbox" value="${specialty}" id="specialty_${specialty}">
+                            <label class="form-check-label" for="specialty_${specialty}">
+                                ${specialty}
+                            </label>
+                        `;
+                        specialtyList.appendChild(div);
+                    });
+                })
+                .catch(error => {
+                    console.error('Błąd podczas ładowania specjalności:', error);
+                });
+        }
+    }
+
+    // Przyciśnięcie Enter w modalnym formularzu również zastosuje filtry
+    document.getElementById('filterForm').addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            applyFilters();
+        }
+    });
+</script>
