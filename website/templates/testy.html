@@ -1,0 +1,120 @@
+<style>
+    .resource-card {
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+        border-radius: 12px;
+    }
+    .resource-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 .5rem 1rem rgba(0,0,0,.15)!important;
+    }
+    .subject-icon {
+        width: 48px;
+        height: 48px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 10px;
+        font-size: 1.5rem;
+    }
+    .link-list a {
+        text-decoration: none;
+        color: #495057;
+        transition: color 0.2s;
+        display: block;
+        padding: 8px 0;
+        border-bottom: 1px solid #f8f9fa;
+    }
+    .link-list a:hover {
+        color: #0d6efd;
+    }
+    .link-list a:last-child {
+        border-bottom: none;
+    }
+</style>
+
+<div class="container py-4" style="max-width: 900px;">
+
+    <div class="text-center mb-5">
+        <h1 class="display-5 fw-bold text-primary">Przygotuj się do testu!</h1>
+        <p class="lead text-muted">Darmowe materiały, arkusze i strony, które pomogą Ci zdać egzamin na 100%.</p>
+    </div>
+
+    <div class="card border-0 shadow-sm mb-5 bg-primary text-white" style="background: linear-gradient(135deg, #0d6efd, #0b5ed7);">
+        <div class="card-body p-4 p-md-5 d-flex flex-column flex-md-row align-items-center justify-content-between">
+            <div class="mb-3 mb-md-0 me-md-4">
+                <h3 class="fw-bold"><i class="bi bi-file-earmark-pdf-fill me-2 text-warning"></i>Oficjalne Arkusze CKE</h3>
+                <p class="mb-0 fs-5 text-white-50">Rozwiązywanie arkuszy z poprzednich lat to najlepszy sposób na naukę. Zobacz, jak wyglądają prawdziwe zadania egzaminacyjne.</p>
+            </div>
+            <div class="flex-shrink-0 text-center">
+                <a href="https://cke.gov.pl/egzamin-osmoklasisty/arkusze/" target="_blank" class="btn btn-warning btn-lg fw-bold rounded-pill shadow-sm">
+                    Pobierz Arkusze <i class="bi bi-box-arrow-up-right ms-1"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <h3 class="fw-bold mb-4 border-bottom pb-2">Najlepsze darmowe materiały w sieci</h3>
+
+    <div class="row g-4 mb-5">
+
+        <div class="col-md-4">
+            <div class="card h-100 border-0 shadow-sm resource-card">
+                <div class="card-body p-4">
+                    <div class="subject-icon bg-danger bg-opacity-10 text-danger mb-3">
+                        <i class="bi bi-calculator"></i>
+                    </div>
+                    <h5 class="card-title fw-bold">Matematyka</h5>
+                    <p class="card-text text-muted small">Wzory, ułamki, geometria i pewniaki egzaminacyjne w prostych słowach.</p>
+                    <div class="link-list mt-3">
+                        <a href="https://pistacja.tv/" target="_blank"><i class="bi bi-play-circle text-danger me-2"></i>Pi-stacja (Wideo lekcje)</a>
+                        <a href="https://szaloneliczby.pl/egzamin-osmoklasisty/" target="_blank"><i class="bi bi-check2-square text-success me-2"></i>Szalone Liczby (Testy)</a>
+                        <a href="https://matemaks.pl/egzamin-osmoklasisty.html" target="_blank"><i class="bi bi-link-45deg text-primary me-2"></i>Matemaks (Zadania)</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card h-100 border-0 shadow-sm resource-card">
+                <div class="card-body p-4">
+                    <div class="subject-icon bg-primary bg-opacity-10 text-primary mb-3">
+                        <i class="bi bi-book"></i>
+                    </div>
+                    <h5 class="card-title fw-bold">Język Polski</h5>
+                    <p class="card-text text-muted small">Streszczenia lektur obowiązkowych, motywy literackie i zasady pisania rozprawki.</p>
+                    <div class="link-list mt-3">
+                        <a href="https://wolnelektury.pl/" target="_blank"><i class="bi bi-book-half text-primary me-2"></i>Wolne Lektury (Książki)</a>
+                        <a href="https://zpe.gov.pl/" target="_blank"><i class="bi bi-laptop text-info me-2"></i>ZPE (Platforma gov.pl)</a>
+                        <a href="https://www.youtube.com/c/WiedzazWami" target="_blank"><i class="bi bi-youtube text-danger me-2"></i>Wiedza z Wami (YouTube)</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card h-100 border-0 shadow-sm resource-card">
+                <div class="card-body p-4">
+                    <div class="subject-icon bg-success bg-opacity-10 text-success mb-3">
+                        <i class="bi bi-chat-quote"></i>
+                    </div>
+                    <h5 class="card-title fw-bold">Język Angielski</h5>
+                    <p class="card-text text-muted small">Czasy gramatyczne, słownictwo z działów tematycznych i rozumienie ze słuchu.</p>
+                    <div class="link-list mt-3">
+                        <a href="https://engly.pl/tasks/exam_type/8" target="_blank"><i class="bi bi-pencil me-2 text-warning"></i>Engly.pl (Ćwiczenia)</a>
+                        <a href="https://quizlet.com/pl" target="_blank"><i class="bi bi-card-text text-primary me-2"></i>Quizlet (Fiszki i słówka)</a>
+                        <a href="https://www.ang.pl/cwiczenia" target="_blank"><i class="bi bi-globe me-2 text-success"></i>Ang.pl (Gramatyka)</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="alert alert-info border-0 shadow-sm d-flex align-items-center" role="alert">
+        <i class="bi bi-lightbulb-fill fs-3 text-info me-3"></i>
+        <div>
+            <strong>Pamiętaj!</strong> Najważniejsza jest systematyczność. Rozwiązuj jeden arkusz egzaminacyjny tygodniowo, a na samym egzaminie nic Cię nie zaskoczy. Powodzenia!
+        </div>
+    </div>
+
+</div>

@@ -1,0 +1,93 @@
+<style>
+    .olympiad-card {
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .olympiad-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 .5rem 1rem rgba(0,0,0,.15)!important;
+    }
+    .icon-box {
+        width: 50px;
+        height: 50px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+    }
+</style>
+
+<div class="container py-4" style="max-width: 900px;">
+
+    <div class="text-center mb-5">
+        <h1 class="display-5 fw-bold text-primary">Olimpiady i Konkursy</h1>
+        <p class="lead text-muted">Odkryj alternatywną ścieżkę do wymarzonej szkoły średniej.</p>
+    </div>
+
+    <div class="card border-0 shadow-sm mb-5 text-white" style="background: linear-gradient(135deg, #0d6efd, #0dcaf0);">
+        <div class="card-body p-4 p-md-5 text-center">
+            <h2 class="fw-bold mb-3"><i class="bi bi-rocket-takeoff me-2"></i> Wstęp "poza kolejnością"</h2>
+            <p class="fs-5 mb-0">
+                To najbardziej pożądana ścieżka. Jeśli zdobędziesz odpowiedni tytuł, <strong>jesteś przyjmowany do wybranej przez siebie szkoły w pierwszej kolejności</strong>, niezależnie od limitów punktowych. Musisz jedynie zarejestrować się w systemie rekrutacyjnym i złożyć wniosek. Kto ma do tego prawo?
+            </p>
+        </div>
+    </div>
+
+    <div class="row g-4 mb-5">
+
+        <div class="col-md-6">
+            <div class="card h-100 border-0 shadow-sm olympiad-card">
+                <div class="card-body p-4 d-flex flex-column">
+                    <div class="icon-box bg-success text-white rounded-circle mb-3 shadow-sm">
+                        <i class="bi bi-globe-americas fs-4"></i>
+                    </div>
+                    <h4 class="card-title fw-bold">Ogólnopolskie Olimpiady Przedmiotowe</h4>
+                    <p class="card-text text-muted mt-2">
+                        Mowa tu o oficjalnych olimpiadach dla uczniów szkół podstawowych, takich jak <em>Olimpiada Matematyczna Juniorów</em> czy <em>Olimpiada Literatury i Języka Polskiego</em>.
+                    </p>
+                    <div class="mt-auto pt-3">
+                        <div class="alert alert-success mb-0 border-0">
+                            <strong><i class="bi bi-check-circle-fill me-2"></i>Gwarancja przyjęcia:</strong>
+                            <hr class="my-2">
+                            Zarówno <strong>Laureat</strong>, jak i <strong>Finalista</strong> (czyli samo przejście do ostatniego etapu!) ma gwarantowany wstęp do wybranej szkoły.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card h-100 border-0 shadow-sm olympiad-card">
+                <div class="card-body p-4 d-flex flex-column">
+                    <div class="icon-box bg-warning text-dark rounded-circle mb-3 shadow-sm">
+                        <i class="bi bi-award fs-4"></i>
+                    </div>
+                    <h4 class="card-title fw-bold">Konkursy Przedmiotowe Kuratora Oświaty</h4>
+                    <p class="card-text text-muted mt-2">
+                        To konkursy wojewódzkie organizowane przez Kuratorium Oświaty z poszczególnych przedmiotów (np. z historii, biologii, matematyki).
+                    </p>
+                    <div class="mt-auto pt-3">
+                        <ul class="list-group list-group-flush mb-0">
+                            <li class="list-group-item px-0 border-0 pb-2">
+                                <strong><i class="bi bi-star-fill text-warning me-2"></i>Laureat:</strong>
+                                Ma pełną <strong>gwarancję przyjęcia</strong> w pierwszej kolejności.
+                            </li>
+                            <li class="list-group-item px-0 border-0 pt-2 border-top">
+                                <strong><i class="bi bi-plus-circle-fill text-primary me-2"></i>Finalista:</strong>
+                                Nie ma gwarancji miejsca, ale dostaje potężny zastrzyk <strong>dodatkowych punktów (często od 7 do 10)</strong>, co daje gigantyczną przewagę w standardowej rekrutacji.
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="text-center bg-white p-4 rounded shadow-sm border">
+        <h4 class="fw-bold mb-3">Chcesz spróbować swoich sił?</h4>
+        <p class="text-muted mb-4">Przygotowania warto zacząć już w 7 klasie. Sprawdź kalendarz konkursów w swoim województwie lub zapoznaj się z harmonogramem ogólnopolskim.</p>
+
+        <button class="btn btn-outline-primary me-2 mb-2"><i class="bi bi-search me-1"></i> Znajdź konkurs dla siebie</button>
+        <button class="btn btn-outline-success mb-2"><i class="bi bi-book me-1"></i> Zobacz bazy starych arkuszy</button>
+    </div>
+
+</div>
