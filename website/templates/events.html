@@ -4,6 +4,8 @@
     .event-date-box { background-color: #e9ecef; border-radius: 10px; text-align: center; padding: 10px; min-width: 80px; }
     .event-date-box .day { font-size: 1.5rem; font-weight: bold; line-height: 1; color: #0d6efd; }
     .event-date-box .month { font-size: 0.85rem; text-transform: uppercase; font-weight: 600; color: #6c757d; }
+    .btn-save-event { transition: all 0.2s; }
+    .btn-save-event:hover { transform: scale(1.1); }
 </style>
 
 <div class="container py-3" style="max-width: 900px;">
@@ -12,7 +14,7 @@
         <p class="lead text-muted">Znajdź dni otwarte, warsztaty i spotkania informacyjne w Twojej okolicy.</p>
     </div>
 
-    <div class="card shadow-sm mb-5 border-0 bg-light">
+    <div class="card shadow-sm mb-4 border-0 bg-light">
         <div class="card-body p-4">
             <h5 class="card-title mb-3"><i class="bi bi-geo-alt-fill text-danger"></i> Filtruj po odległości</h5>
             <label for="distanceRange" class="form-label fw-bold">
@@ -38,39 +40,29 @@
 
 <script>
     (function() {
-        // Przykładowa baza wydarzeń (MVP na Hackathon)
-        const mockEvents = [
-            { id: 1, title: "Dni Otwarte - Profil Informatyczny", school: "Technikum Łączności nr 4 w Gdańsku", date: "2026-03-14", distance: 4.5, type: "Dni Otwarte", icon: "bi-door-open" },
-            { id: 2, title: "Warsztaty: Zbuduj swojego robota", school: "Zespół Szkół Chłodniczych i Elektronicznych", date: "2026-03-21", distance: 8.2, type: "Warsztaty", icon: "bi-tools" },
-            { id: 3, title: "Spotkanie z doradcą zawodowym", school: "Centrum Kształcenia Zawodowego", date: "2026-03-25", distance: 2.1, type: "Doradztwo", icon: "bi-person-badge" },
-            { id: 4, title: "Dzień Otwarty - Klasy mundurowe", school: "Liceum Ogólnokształcące nr VII", date: "2026-04-05", distance: 12.0, type: "Dni Otwarte", icon: "bi-shield-check" },
-            { id: 5, title: "Targi Edukacyjne Trójmiasta", school: "AmberExpo Gdańsk", date: "2026-04-10", distance: 6.5, type: "Targi", icon: "bi-mega-phone" },
-            { id: 6, title: "Poznaj szkołę morską", school: "Zespół Szkół Morskich", date: "2026-04-18", distance: 3.0, type: "Dni Otwarte", icon: "bi-water" },
-            { id: 7, title: "Dni Otwarte Technikum Leśnego", school: "Technikum Leśne (Sopot)", date: "2026-04-22", distance: 18.5, type: "Dni Otwarte", icon: "bi-tree" },
-            { id: 8, title: "Warsztaty gastronomiczne", school: "Zespół Szkół Gastronomicznych (Gdynia)", date: "2026-05-10", distance: 25.0, type: "Warsztaty", icon: "bi-cup-hot" }
-        ];
+        let allEvents = []; 
 
         const eventsList = document.getElementById('events-list');
         const noEventsMsg = document.getElementById('no-events-msg');
         const distanceRange = document.getElementById('distanceRange');
         const distanceValue = document.getElementById('distanceValue');
 
-        // Funkcja do formatowania daty na ładny kafelek
+        // Pobranie zapisanych wydarzeń z LocalStorage
+        function getSavedEvents() {
+            return JSON.parse(localStorage.getItem('sm_saved_events')) || [];
+        }
+
         function formatDate(dateString) {
             const date = new Date(dateString);
             const months = ["Sty", "Lut", "Mar", "Kwi", "Maj", "Cze", "Lip", "Sie", "Wrz", "Paź", "Lis", "Gru"];
-            return {
-                day: date.getDate(),
-                month: months[date.getMonth()]
-            };
+            return { day: date.getDate(), month: months[date.getMonth()] };
         }
 
-        // Funkcja renderująca wydarzenia
         function renderEvents(maxDistance) {
-            eventsList.innerHTML = ''; // Czyszczenie listy
+            eventsList.innerHTML = ''; 
+            const savedEvents = getSavedEvents();
             
-            // Filtrowanie i sortowanie po dacie (rosnąco)
-            const filteredEvents = mockEvents
+            const filteredEvents = allEvents
                 .filter(ev => ev.distance <= maxDistance)
                 .sort((a, b) => new Date(a.date) - new Date(b.date));
 
@@ -81,6 +73,11 @@
                 
                 filteredEvents.forEach(ev => {
                     const dateObj = formatDate(ev.date);
+                    // Sprawdzamy czy wydarzenie jest w zapisanych
+                    const isSaved = savedEvents.some(saved => saved.id === ev.id);
+                    const btnClass = isSaved ? 'btn-danger' : 'btn-outline-danger';
+                    const iconClass = isSaved ? 'bi-heart-fill' : 'bi-heart';
+                    const btnTitle = isSaved ? 'Usuń z zapisanych' : 'Zapisz wydarzenie';
                     
                     const card = document.createElement('div');
                     card.className = 'card shadow-sm border-0 event-card';
@@ -95,25 +92,61 @@
                                 <h6 class="card-subtitle text-muted mb-2"><i class="bi bi-building"></i> ${ev.school}</h6>
                                 <span class="badge bg-light text-dark border"><i class="bi ${ev.icon} me-1"></i> ${ev.type}</span>
                             </div>
-                            <div class="text-end d-none d-sm-block">
-                                <div class="fs-4 fw-bold text-danger">${ev.distance.toFixed(1)} km</div>
-                                <small class="text-muted">od Ciebie</small>
+                            <div class="text-end d-flex flex-column align-items-end justify-content-between h-100">
+                                <button class="btn btn-sm ${btnClass} rounded-circle btn-save-event mb-2" data-id="${ev.id}" title="${btnTitle}" style="width: 35px; height: 35px;">
+                                    <i class="bi ${iconClass}"></i>
+                                </button>
+                                <div class="d-none d-sm-block">
+                                    <div class="fw-bold text-primary">${ev.distance.toFixed(1)} km</div>
+                                </div>
                             </div>
                         </div>
                     `;
                     eventsList.appendChild(card);
                 });
+
+                // Podpinamy logikę do przycisków "Zapisz"
+                document.querySelectorAll('.btn-save-event').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const evId = parseInt(this.getAttribute('data-id'));
+                        const evObj = allEvents.find(e => e.id === evId);
+                        let saved = getSavedEvents();
+
+                        // Jeśli już zapisane -> usuwamy. Jeśli nie -> dodajemy.
+                        if (saved.some(e => e.id === evId)) {
+                            saved = saved.filter(e => e.id !== evId);
+                        } else {
+                            saved.push(evObj);
+                        }
+                        
+                        localStorage.setItem('sm_saved_events', JSON.stringify(saved));
+                        renderEvents(parseFloat(distanceRange.value)); // Odświeża UI żeby zmienić serduszko
+                    });
+                });
             }
         }
 
-        // Nasłuchiwanie zmian na suwaku
         distanceRange.addEventListener('input', function() {
             const currentDist = parseFloat(this.value);
             distanceValue.innerText = currentDist;
             renderEvents(currentDist);
         });
 
-        // Inicjalne renderowanie z domyślną wartością (15km)
-        renderEvents(parseFloat(distanceRange.value));
+        async function fetchEventsFromDatabase() {
+            eventsList.innerHTML = '<div class="text-center py-5"><div class="spinner-border text-primary" role="status"></div><p class="mt-2 text-muted">Ładowanie wydarzeń z bazy...</p></div>';
+            
+            try {
+                const response = await fetch('/api/events');
+                if (!response.ok) throw new Error("Błąd sieci");
+                
+                allEvents = await response.json();
+                renderEvents(parseFloat(distanceRange.value));
+            } catch (error) {
+                console.error("Błąd pobierania wydarzeń:", error);
+                eventsList.innerHTML = '<div class="alert alert-danger shadow-sm border-0 mt-3"><i class="bi bi-exclamation-triangle-fill me-2"></i> Nie udało się załadować wydarzeń z bazy danych.</div>';
+            }
+        }
+
+        fetchEventsFromDatabase();
     })();
 </script>

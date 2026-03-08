@@ -4,6 +4,8 @@
     .avatar-wrapper { position: relative; display: inline-block; margin-top: -50px; }
     .avatar-preview { width: 150px; height: 150px; object-fit: cover; border: 5px solid white; background-color: #f8f9fa; }
     .btn-upload { position: absolute; bottom: 0; right: 0; border-radius: 50%; width: 40px; height: 40px; padding: 0; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
+    .saved-event-item { border-left: 4px solid #198754; transition: all 0.2s; }
+    .saved-event-item:hover { background-color: #f8f9fa; }
 </style>
 
 <div class="container py-4" style="max-width: 800px;">
@@ -19,9 +21,7 @@
                 <div class="col-md-4 text-center mb-4 mb-md-0">
                     <div class="avatar-wrapper">
                         <img id="avatar-image" src="https://ui-avatars.com/api/?name=Uczeń&background=random&size=150" alt="Twoje zdjęcie" class="rounded-circle avatar-preview shadow-sm">
-                        
                         <input type="file" id="image-upload" class="d-none" accept="image/png, image/jpeg, image/jpg">
-                        
                         <button type="button" class="btn btn-primary btn-upload" id="upload-btn" title="Zmień zdjęcie">
                             <i class="bi bi-camera-fill"></i>
                         </button>
@@ -71,10 +71,53 @@
         </div>
     </div>
 
-    <div class="alert alert-success d-none align-items-center shadow-sm border-0" id="success-alert" role="alert">
+    <div class="alert alert-success d-none align-items-center shadow-sm border-0 mb-4" id="success-alert" role="alert">
         <i class="bi bi-check-circle-fill fs-4 me-3"></i>
-        <div>
-            <strong>Super!</strong> Twój profil został zaktualizowany.
+        <div><strong>Super!</strong> Twój profil został zaktualizowany.</div>
+    </div>
+
+    <div class="card profile-card mb-4 border-primary border-top border-4">
+        <div class="card-body p-4">
+            <h4 class="fw-bold mb-3 text-dark">
+                <i class="bi bi-patch-check-fill text-primary me-2"></i> Twoje predyspozycje (Test)
+            </h4>
+            
+            <div id="qa-result-container" class="d-none">
+                <div class="alert alert-primary bg-primary bg-opacity-10 border-0 mb-0">
+                    <div class="d-flex justify-content-between align-items-start mb-2">
+                        <h5 class="fw-bold text-primary mb-0" id="profile-qa-title"></h5>
+                        <span class="badge bg-primary" id="profile-qa-score"></span>
+                    </div>
+                    <p class="mb-2 small text-dark" id="profile-qa-desc"></p>
+                    <hr class="border-primary opacity-25">
+                    <p class="mb-2 small"><strong><i class="bi bi-briefcase me-1"></i> Polecane zawody:</strong> <span id="profile-qa-jobs"></span></p>
+                    <button class="btn btn-sm btn-outline-primary mt-2" onclick="document.querySelector('[data-module=\'QA.html\']').click()">Zrób test ponownie</button>
+                </div>
+            </div>
+
+            <div id="qa-no-result" class="text-center py-3">
+                <p class="text-muted mb-3">Jeszcze nie rozwiązałeś testu predyspozycji. Dowiedz się, jaka ścieżka do Ciebie pasuje!</p>
+                <button class="btn btn-primary shadow-sm" onclick="document.querySelector('[data-module=\'QA.html\']').click()">
+                    Rozwiąż test teraz
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="card profile-card mb-4">
+        <div class="card-body p-4">
+            <h4 class="fw-bold mb-4 text-dark">
+                <i class="bi bi-calendar-heart text-danger me-2"></i> Twoje zapisane wydarzenia
+            </h4>
+            
+            <div id="saved-events-container" class="list-group list-group-flush border-top border-bottom">
+            </div>
+            
+            <div id="no-saved-events" class="text-center py-4 d-none text-muted">
+                <i class="bi bi-calendar-x fs-1 opacity-50"></i>
+                <p class="mt-2 mb-0">Nie masz jeszcze żadnych zapisanych wydarzeń.</p>
+                <small>Przejdź do zakładki "Wydarzenia", aby coś dodać.</small>
+            </div>
         </div>
     </div>
 
@@ -82,39 +125,33 @@
 
 <script>
     (function() {
-        // Obsługa wgrywania i podglądu zdjęcia
+        // --- 1. LOGIKA PROFILU UŻYTKOWNIKA ---
         const uploadBtn = document.getElementById('upload-btn');
         const imageUpload = document.getElementById('image-upload');
         const avatarImage = document.getElementById('avatar-image');
-
-        uploadBtn.addEventListener('click', () => {
-            imageUpload.click();
-        });
-
-        imageUpload.addEventListener('change', function() {
-            const file = this.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    avatarImage.src = e.target.result;
-                }
-                reader.readAsDataURL(file);
-            }
-        });
-
-        // Obsługa formularza
         const profileForm = document.getElementById('profile-form');
         const firstNameInput = document.getElementById('firstName');
         const lastNameInput = document.getElementById('lastName');
+        const ageInput = document.getElementById('age');
+        const locationInput = document.getElementById('location');
+        const currentSchoolInput = document.getElementById('currentSchool');
         const displayName = document.getElementById('display-name');
         const successAlert = document.getElementById('success-alert');
         const resetBtn = document.getElementById('reset-btn');
 
-        // Funkcja do aktualizacji nazwy pod zdjęciem (łączy imię i nazwisko)
+        function loadSavedProfile() {
+            if (localStorage.getItem('sm_firstName')) firstNameInput.value = localStorage.getItem('sm_firstName');
+            if (localStorage.getItem('sm_lastName')) lastNameInput.value = localStorage.getItem('sm_lastName');
+            if (localStorage.getItem('sm_age')) ageInput.value = localStorage.getItem('sm_age');
+            if (localStorage.getItem('sm_location')) locationInput.value = localStorage.getItem('sm_location');
+            if (localStorage.getItem('sm_currentSchool')) currentSchoolInput.value = localStorage.getItem('sm_currentSchool');
+            if (localStorage.getItem('sm_avatar')) avatarImage.src = localStorage.getItem('sm_avatar');
+            updateDisplayName();
+        }
+
         function updateDisplayName() {
             const first = firstNameInput.value.trim();
             const last = lastNameInput.value.trim();
-            
             if (first || last) {
                 displayName.innerText = `${first} ${last}`.trim();
             } else {
@@ -122,29 +159,112 @@
             }
         }
 
-        // Nasłuchiwanie zmian w polach Imię i Nazwisko
         firstNameInput.addEventListener('input', updateDisplayName);
         lastNameInput.addEventListener('input', updateDisplayName);
 
-        // Symulacja zapisywania danych
+        uploadBtn.addEventListener('click', () => { imageUpload.click(); });
+
+        imageUpload.addEventListener('change', function() {
+            const file = this.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    avatarImage.src = e.target.result;
+                    localStorage.setItem('sm_avatar', e.target.result);
+                }
+                reader.readAsDataURL(file);
+            }
+        });
+
         profileForm.addEventListener('submit', function(e) {
             e.preventDefault(); 
+            localStorage.setItem('sm_firstName', firstNameInput.value);
+            localStorage.setItem('sm_lastName', lastNameInput.value);
+            localStorage.setItem('sm_age', ageInput.value);
+            localStorage.setItem('sm_location', locationInput.value);
+            localStorage.setItem('sm_currentSchool', currentSchoolInput.value);
             
             successAlert.classList.remove('d-none');
             successAlert.classList.add('d-flex');
-            
-            setTimeout(() => {
-                successAlert.classList.add('d-none');
-                successAlert.classList.remove('d-flex');
-            }, 3000);
+            setTimeout(() => { successAlert.classList.add('d-none'); successAlert.classList.remove('d-flex'); }, 3000);
         });
 
-        // Odrzucenie zmian (reset formularza)
         if (resetBtn) {
             resetBtn.addEventListener('click', () => {
                 profileForm.reset();
-                updateDisplayName(); // Przywraca domyślny napis po zresetowaniu
+                updateDisplayName(); 
             });
         }
+
+        // --- 2. LOGIKA ZAPISANYCH WYDARZEŃ ---
+        const savedEventsContainer = document.getElementById('saved-events-container');
+        const noSavedEventsMsg = document.getElementById('no-saved-events');
+
+        function renderSavedEvents() {
+            savedEventsContainer.innerHTML = '';
+            const savedEvents = JSON.parse(localStorage.getItem('sm_saved_events')) || [];
+
+            if (savedEvents.length === 0) {
+                noSavedEventsMsg.classList.remove('d-none');
+            } else {
+                noSavedEventsMsg.classList.add('d-none');
+                
+                savedEvents.forEach(ev => {
+                    const item = document.createElement('div');
+                    item.className = 'list-group-item saved-event-item p-3 d-flex justify-content-between align-items-center';
+                    item.innerHTML = `
+                        <div>
+                            <h6 class="mb-1 fw-bold">${ev.title}</h6>
+                            <p class="mb-0 text-muted small"><i class="bi bi-building"></i> ${ev.school}</p>
+                            <span class="badge bg-light text-dark border mt-1"><i class="bi ${ev.icon}"></i> ${ev.date}</span>
+                        </div>
+                        <button class="btn btn-outline-danger btn-sm rounded-circle remove-event-btn" data-id="${ev.id}" title="Usuń">
+                            <i class="bi bi-trash"></i>
+                        </button>
+                    `;
+                    savedEventsContainer.appendChild(item);
+                });
+
+                document.querySelectorAll('.remove-event-btn').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const evId = parseInt(this.getAttribute('data-id'));
+                        let currentSaved = JSON.parse(localStorage.getItem('sm_saved_events')) || [];
+                        currentSaved = currentSaved.filter(e => e.id !== evId);
+                        localStorage.setItem('sm_saved_events', JSON.stringify(currentSaved));
+                        renderSavedEvents();
+                    });
+                });
+            }
+        }
+
+        // --- 3. LOGIKA WYNIKÓW TESTU QA ---
+        function loadQAResult() {
+            const qaDataStr = localStorage.getItem('sm_qa_result');
+            const resultContainer = document.getElementById('qa-result-container');
+            const noResultContainer = document.getElementById('qa-no-result');
+
+            if (qaDataStr) {
+                const qaData = JSON.parse(qaDataStr);
+                
+                // Wypełniamy dane
+                document.getElementById('profile-qa-title').innerText = qaData.nazwa;
+                document.getElementById('profile-qa-score').innerText = `${qaData.score} pkt`;
+                document.getElementById('profile-qa-desc').innerText = qaData.opis;
+                document.getElementById('profile-qa-jobs').innerText = qaData.zawody;
+
+                // Pokazujemy kontener z wynikami, ukrywamy zachętę
+                resultContainer.classList.remove('d-none');
+                noResultContainer.classList.add('d-none');
+            } else {
+                // Jeśli brak wyników, pokazujemy tylko zachętę
+                resultContainer.classList.add('d-none');
+                noResultContainer.classList.remove('d-none');
+            }
+        }
+
+        // Inicjalizacja przy wejściu w profil
+        loadSavedProfile();
+        renderSavedEvents();
+        loadQAResult();
     })();
 </script>

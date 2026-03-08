@@ -74,34 +74,48 @@ def home():
         db.session.add_all(example_schools)
         db.session.commit()
 
-        if Olimpiada.query.count() == 0:
-            biologia_arkusze = [
-                {"nazwa": "Arkusz - Etap I (Szkolny)",
-                 "url": "/static/arkusz-zadan-z-biologii-stopien-i-szkolny-–-2024-2025.pdf"},
-                {"nazwa": "Model - Etap I",
-                 "url": "/static/model-odpowiedzi-do-zadan-z-biologii-stopien-i-szkolny-2024-2025.pdf"},
-                {"nazwa": "Arkusz - Etap II (Rejonowy)",
-                 "url": "/static/arkusz-zadan-z-biologii-stopien-ii-rejonowy-2024-2025.pdf"},
-                {"nazwa": "Model - Etap II",
-                 "url": "/static/model-odpowiedzi-do-zadan-z-biologii-stopien-ii-rejonowy-2024-2025.pdf"},
-                {"nazwa": "Arkusz - Etap III (Wojewódzki)",
-                 "url": "/static/arkusz-zadan-z-biologii-stopien-iiii-wojewodzki-–-2024-2025.pdf"},
-                {"nazwa": "Model - Etap III",
-                 "url": "/static/model-odpowiedzi-do-zadan-z-biologii-stopien-iii-wojewodzki-2024-2025.pdf"}
-            ]
+     if Olimpiada.query.count() == 0:
+        biologia_arkusze = [
+            {"nazwa": "Arkusz - Etap I (Szkolny)",
+             "url": "/static/arkusz-zadan-z-biologii-stopien-i-szkolny-–-2024-2025.pdf"},
+            {"nazwa": "Model - Etap I",
+             "url": "/static/model-odpowiedzi-do-zadan-z-biologii-stopien-i-szkolny-2024-2025.pdf"},
+            {"nazwa": "Arkusz - Etap II (Rejonowy)",
+             "url": "/static/arkusz-zadan-z-biologii-stopien-ii-rejonowy-2024-2025.pdf"},
+            {"nazwa": "Model - Etap II",
+             "url": "/static/model-odpowiedzi-do-zadan-z-biologii-stopien-ii-rejonowy-2024-2025.pdf"},
+            {"nazwa": "Arkusz - Etap III (Wojewódzki)",
+             "url": "/static/arkusz-zadan-z-biologii-stopien-iiii-wojewodzki-–-2024-2025.pdf"},
+            {"nazwa": "Model - Etap III",
+             "url": "/static/model-odpowiedzi-do-zadan-z-biologii-stopien-iii-wojewodzki-2024-2025.pdf"}
+        ]
 
-            example_olimpiady = [
-                Olimpiada(nazwa='Olimpiada Matematyczna Juniorów', data=datetime.now() + timedelta(days=30),
-                          pdf='/arkusze/omj_2024.pdf'),
-                Olimpiada(nazwa='Olimpiada Literatury i Języka Polskiego', data=datetime.now() + timedelta(days=45),
-                          pdf='/arkusze/olijp_2024.pdf'),
-                Olimpiada(nazwa='Wojewódzki Konkurs Kuratoryjny z Biologii', data=datetime.now() + timedelta(days=15),
-                          pdf=json.dumps(biologia_arkusze)),
-                Olimpiada(nazwa='Olimpiada Informatyczna Juniorów', data=datetime.now() + timedelta(days=60),
-                          pdf='/arkusze/oij_2024.pdf')
-            ]
-            db.session.add_all(example_olimpiady)
-            db.session.commit()
+        example_olimpiady = [
+            Olimpiada(nazwa='Olimpiada Matematyczna Juniorów', data=datetime.now() + timedelta(days=30),
+                      pdf='/arkusze/omj_2024.pdf'),
+            Olimpiada(nazwa='Olimpiada Literatury i Języka Polskiego', data=datetime.now() + timedelta(days=45),
+                      pdf='/arkusze/olijp_2024.pdf'),
+            Olimpiada(nazwa='Wojewódzki Konkurs Kuratoryjny z Biologii', data=datetime.now() + timedelta(days=15),
+                      pdf=json.dumps(biologia_arkusze)),
+            Olimpiada(nazwa='Olimpiada Informatyczna Juniorów', data=datetime.now() + timedelta(days=60),
+                      pdf='/arkusze/oij_2024.pdf')
+        ]
+        db.session.add_all(example_olimpiady)
+        db.session.commit()
+        
+    if Wydarzenie.query.count() == 0:
+        example_events = [
+            Wydarzenie(typ="Dni Otwarte", nazwa_wydarzenia="Dni Otwarte - Profil Informatyczny", data=datetime(2026, 3, 14, 10, 0), szkola="Technikum Łączności nr 4 w Gdańsku", odleglosc=4.5),
+            Wydarzenie(typ="Warsztaty", nazwa_wydarzenia="Warsztaty: Zbuduj swojego robota", data=datetime(2026, 3, 21, 12, 0), szkola="Zespół Szkół Chłodniczych i Elektronicznych", odleglosc=8.2),
+            Wydarzenie(typ="Doradztwo", nazwa_wydarzenia="Spotkanie z doradcą zawodowym", data=datetime(2026, 3, 25, 15, 0), szkola="Centrum Kształcenia Zawodowego", odleglosc=2.1),
+            Wydarzenie(typ="Dni Otwarte", nazwa_wydarzenia="Dzień Otwarty - Klasy mundurowe", data=datetime(2026, 4, 5, 9, 0), szkola="Liceum Ogólnokształcące nr VII", odleglosc=12.0),
+            Wydarzenie(typ="Targi", nazwa_wydarzenia="Targi Edukacyjne Trójmiasta", data=datetime(2026, 4, 10, 10, 0), szkola="AmberExpo Gdańsk", odleglosc=6.5),
+            Wydarzenie(typ="Dni Otwarte", nazwa_wydarzenia="Poznaj szkołę morską", data=datetime(2026, 4, 18, 11, 0), szkola="Zespół Szkół Morskich", odleglosc=3.0),
+            Wydarzenie(typ="Dni Otwarte", nazwa_wydarzenia="Dni Otwarte Technikum Leśnego", data=datetime(2026, 4, 22, 9, 0), szkola="Technikum Leśne (Sopot)", odleglosc=18.5),
+            Wydarzenie(typ="Warsztaty", nazwa_wydarzenia="Warsztaty gastronomiczne", data=datetime(2026, 5, 10, 10, 0), szkola="Zespół Szkół Gastronomicznych (Gdynia)", odleglosc=25.0)
+        ]
+        db.session.add_all(example_events)
+        db.session.commit()
 
     return render_template('index.html')
 
@@ -137,6 +151,30 @@ def olimpiady_view():
             olimpiada.arkusze_list = []
 
     return render_template('olimpiady.html', olimpiady=olimpiady)
+@app.route('/api/events')
+def api_events():
+    events = Wydarzenie.query.all()
+    result = []
+    
+    for ev in events:
+        # Dobieramy ikonę Bootstrapa na podstawie typu wydarzenia
+        icon = "bi-calendar-event"
+        if ev.typ == "Dni Otwarte": icon = "bi-door-open"
+        elif ev.typ == "Warsztaty": icon = "bi-tools"
+        elif ev.typ == "Doradztwo": icon = "bi-person-badge"
+        elif ev.typ == "Targi": icon = "bi-mega-phone"
+
+        result.append({
+            "id": ev.id,
+            "title": ev.nazwa_wydarzenia,
+            "school": ev.szkola or "Brak lokalizacji",
+            "date": ev.data.strftime('%Y-%m-%d'),
+            "distance": ev.odleglosc or 0.0,
+            "type": ev.typ,
+            "icon": icon
+        })
+        
+    return jsonify(result)
 
 @app.route('/get-specialties')
 def get_specialties():
