@@ -1,354 +1,167 @@
-<!DOCTYPE html>
-<html lang="pl">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Zasmakuj Kariery</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        body {
-            background-color: #f8f9fa;
-        }
-        .section-card {
-            transition: all 0.2s ease-in-out;
-            border-left: 5px solid #0d6efd;
-            background-color: #ffffff;
-            border-radius: 10px;
-            box-shadow: 0 .125rem .25rem rgba(0,0,0,.075);
-        }
-        .section-card:hover {
-            transform: translateX(5px);
-            box-shadow: 0 .5rem 1rem rgba(0,0,0,.15)!important;
-        }
-        .section-title {
-            color: #0d6efd;
-            margin-bottom: 2rem;
-            font-weight: bold;
-        }
-        .carousel-item iframe {
-            width: 100%;
-            height: 315px;
-            border: none;
-            border-radius: 10px;
-        }
-        .carousel-control-prev, .carousel-control-next {
-            width: 5%;
-        }
-        .carousel-caption {
-            background-color: rgba(13, 110, 253, 0.8);
-            border-radius: 10px;
-        }
-        .grid-view iframe {
-            width: 100%;
-            height: 200px;
-            border: none;
-            border-radius: 10px;
-        }
-        .grid-view .card {
-            margin-bottom: 1rem;
-        }
-        .view-toggle {
-            position: absolute;
-            top: 1rem;
-            left: 1rem;
-            z-index: 10;
-            background-color: rgba(255, 255, 255, 0.8);
-            border: none;
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-        .view-toggle:hover {
-            background-color: rgba(255, 255, 255, 1);
-        }
-        .section-content {
-            position: relative;
-        }
-    </style>
-</head>
-<body>
-    <div class="container py-3" style="max-width: 900px;">
-        <div class="text-center mb-4">
-            <h1 class="display-5 fw-bold text-primary"><i class="bi bi-briefcase"></i> Zasmakuj Kariery</h1>
-            <p class="lead text-muted">Odkryj ścieżki kariery przez filmy absolwentów i relacje z zawodów.</p>
-        </div>
+<style>
+    /* Usunąłem styl body, ponieważ dziedziczymy go z index.html */
+    .section-card {
+        transition: all 0.2s ease-in-out;
+        border-left: 5px solid #0d6efd;
+        background-color: #ffffff;
+        border-radius: 10px;
+        box-shadow: 0 .125rem .25rem rgba(0,0,0,.075);
+    }
+    .section-card:hover {
+        transform: translateX(5px);
+        box-shadow: 0 .5rem 1rem rgba(0,0,0,.15)!important;
+    }
+    .section-title {
+        color: #0d6efd;
+        margin-bottom: 2rem;
+        font-weight: bold;
+    }
+    .carousel-item iframe {
+        width: 100%;
+        height: 315px;
+        border: none;
+        border-radius: 10px;
+    }
+    .carousel-control-prev, .carousel-control-next {
+        width: 5%;
+    }
+    .carousel-caption {
+        background-color: rgba(13, 110, 253, 0.8);
+        border-radius: 10px;
+    }
+    .grid-view iframe {
+        width: 100%;
+        height: 200px;
+        border: none;
+        border-radius: 10px;
+    }
+    .grid-view .card {
+        margin-bottom: 1rem;
+    }
+    .view-toggle {
+        position: absolute;
+        top: 1rem;
+        left: 1rem;
+        z-index: 10;
+        background-color: rgba(255, 255, 255, 0.8);
+        border: none;
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    .view-toggle:hover {
+        background-color: rgba(255, 255, 255, 1);
+    }
+    .section-content {
+        position: relative;
+    }
+</style>
 
-        <!-- Sekcja: Filmy naszych absolwentów -->
-        <div class="section-card mb-4 p-4">
-            <h2 class="section-title"><i class="bi bi-film me-2"></i> Filmy naszych absolwentów</h2>
-            <div class="section-content">
-                <button class="view-toggle" id="toggle-absolwenci" title="Przełącz na widok siatki">
-                    <i class="bi bi-grid"></i>
-                </button>
-                <div id="absolwenci-carousel" class="carousel-view">
-                    <div id="absolwenciCarousel" class="carousel slide" data-bs-ride="carousel">
-                        <div class="carousel-inner">
-                            <div class="carousel-item active">
-                                <iframe src="https://www.youtube.com/embed/dQw4w9WgXcQ" allowfullscreen></iframe>
-                                <div class="carousel-caption d-none d-md-block">
-                                    <h5>Film absolwenta 1</h5>
-                                    <p>Opis filmu absolwenta.</p>
-                                </div>
-                            </div>
-                            <div class="carousel-item">
-                                <iframe src="https://www.youtube.com/embed/dQw4w9WgXcQ" allowfullscreen></iframe>
-                                <div class="carousel-caption d-none d-md-block">
-                                    <h5>Film absolwenta 2</h5>
-                                    <p>Opis filmu absolwenta.</p>
-                                </div>
-                            </div>
-                            <div class="carousel-item">
-                                <iframe src="https://www.youtube.com/embed/dQw4w9WgXcQ" allowfullscreen></iframe>
-                                <div class="carousel-caption d-none d-md-block">
-                                    <h5>Film absolwenta 3</h5>
-                                    <p>Opis filmu absolwenta.</p>
-                                </div>
+<div class="container py-3" style="max-width: 900px;">
+    <div class="text-center mb-4">
+        <h1 class="display-5 fw-bold text-primary"><i class="bi bi-briefcase"></i> Zasmakuj Kariery</h1>
+        <p class="lead text-muted">Odkryj ścieżki kariery przez filmy absolwentów i relacje z zawodów.</p>
+    </div>
+
+    <div class="section-card mb-4 p-4">
+        <h2 class="section-title"><i class="bi bi-film me-2"></i> Filmy naszych absolwentów</h2>
+        <div class="section-content">
+            <button class="view-toggle" id="toggle-absolwenci" title="Przełącz na widok siatki">
+                <i class="bi bi-grid"></i>
+            </button>
+            <div id="absolwenci-carousel" class="carousel-view">
+                <div id="absolwenciCarousel" class="carousel slide" data-bs-ride="carousel">
+                    <div class="carousel-inner">
+                        <div class="carousel-item active">
+                            <iframe src="https://www.youtube.com/embed/dQw4w9WgXcQ" allowfullscreen></iframe>
+                            <div class="carousel-caption d-none d-md-block">
+                                <h5>Film absolwenta 1</h5>
+                                <p>Opis filmu absolwenta.</p>
                             </div>
                         </div>
-                        <button class="carousel-control-prev" type="button" data-bs-target="#absolwenciCarousel" data-bs-slide="prev">
-                            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                            <span class="visually-hidden">Previous</span>
-                        </button>
-                        <button class="carousel-control-next" type="button" data-bs-target="#absolwenciCarousel" data-bs-slide="next">
-                            <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                            <span class="visually-hidden">Next</span>
-                        </button>
-                    </div>
-                </div>
-                <div id="absolwenci-grid" class="grid-view d-none">
-                    <div class="row">
-                        <div class="col-md-4">
-                            <div class="card">
-                                <iframe src="https://www.youtube.com/embed/dQw4w9WgXcQ" allowfullscreen></iframe>
-                                <div class="card-body">
-                                    <h6 class="card-title">Film absolwenta 1</h6>
-                                    <p class="card-text small">Opis filmu absolwenta.</p>
-                                </div>
+                        <div class="carousel-item">
+                            <iframe src="https://www.youtube.com/embed/dQw4w9WgXcQ" allowfullscreen></iframe>
+                            <div class="carousel-caption d-none d-md-block">
+                                <h5>Film absolwenta 2</h5>
+                                <p>Opis filmu absolwenta.</p>
                             </div>
                         </div>
-                        <div class="col-md-4">
-                            <div class="card">
-                                <iframe src="https://www.youtube.com/embed/dQw4w9WgXcQ" allowfullscreen></iframe>
-                                <div class="card-body">
-                                    <h6 class="card-title">Film absolwenta 2</h6>
-                                    <p class="card-text small">Opis filmu absolwenta.</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-4">
-                            <div class="card">
-                                <iframe src="https://www.youtube.com/embed/dQw4w9WgXcQ" allowfullscreen></iframe>
-                                <div class="card-body">
-                                    <h6 class="card-title">Film absolwenta 3</h6>
-                                    <p class="card-text small">Opis filmu absolwenta.</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-4">
-                            <div class="card">
-                                <iframe src="https://www.youtube.com/embed/dQw4w9WgXcQ" allowfullscreen></iframe>
-                                <div class="card-body">
-                                    <h6 class="card-title">Film absolwenta 4</h6>
-                                    <p class="card-text small">Opis filmu absolwenta.</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-4">
-                            <div class="card">
-                                <iframe src="https://www.youtube.com/embed/dQw4w9WgXcQ" allowfullscreen></iframe>
-                                <div class="card-body">
-                                    <h6 class="card-title">Film absolwenta 5</h6>
-                                    <p class="card-text small">Opis filmu absolwenta.</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-4">
-                            <div class="card">
-                                <iframe src="https://www.youtube.com/embed/dQw4w9WgXcQ" allowfullscreen></iframe>
-                                <div class="card-body">
-                                    <h6 class="card-title">Film absolwenta 6</h6>
-                                    <p class="card-text small">Opis filmu absolwenta.</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-4">
-                            <div class="card">
-                                <iframe src="https://www.youtube.com/embed/dQw4w9WgXcQ" allowfullscreen></iframe>
-                                <div class="card-body">
-                                    <h6 class="card-title">Film absolwenta 7</h6>
-                                    <p class="card-text small">Opis filmu absolwenta.</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-4">
-                            <div class="card">
-                                <iframe src="https://www.youtube.com/embed/dQw4w9WgXcQ" allowfullscreen></iframe>
-                                <div class="card-body">
-                                    <h6 class="card-title">Film absolwenta 8</h6>
-                                    <p class="card-text small">Opis filmu absolwenta.</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-4">
-                            <div class="card">
-                                <iframe src="https://www.youtube.com/embed/dQw4w9WgXcQ" allowfullscreen></iframe>
-                                <div class="card-body">
-                                    <h6 class="card-title">Film absolwenta 9</h6>
-                                    <p class="card-text small">Opis filmu absolwenta.</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-4">
-                            <div class="card">
-                                <iframe src="https://www.youtube.com/embed/dQw4w9WgXcQ" allowfullscreen></iframe>
-                                <div class="card-body">
-                                    <h6 class="card-title">Film absolwenta 10</h6>
-                                    <p class="card-text small">Opis filmu absolwenta.</p>
-                                </div>
+                        <div class="carousel-item">
+                            <iframe src="https://www.youtube.com/embed/dQw4w9WgXcQ" allowfullscreen></iframe>
+                            <div class="carousel-caption d-none d-md-block">
+                                <h5>Film absolwenta 3</h5>
+                                <p>Opis filmu absolwenta.</p>
                             </div>
                         </div>
                     </div>
+                    <button class="carousel-control-prev" type="button" data-bs-target="#absolwenciCarousel" data-bs-slide="prev">
+                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">Previous</span>
+                    </button>
+                    <button class="carousel-control-next" type="button" data-bs-target="#absolwenciCarousel" data-bs-slide="next">
+                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">Next</span>
+                    </button>
                 </div>
             </div>
-        </div>
-
-        <!-- Sekcja: Zawód na luzie -->
-        <div class="section-card mb-4 p-4">
-            <h2 class="section-title"><i class="bi bi-tools me-2"></i> Zawód na luzie</h2>
-            <div class="section-content">
-                <button class="view-toggle" id="toggle-zawod" title="Przełącz na widok siatki">
-                    <i class="bi bi-grid"></i>
-                </button>
-                <div id="zawod-carousel" class="carousel-view">
-                    <div id="zawodCarousel" class="carousel slide" data-bs-ride="carousel">
-                        <div class="carousel-inner">
-                            <div class="carousel-item active">
-                                <iframe src="https://www.youtube.com/embed/dQw4w9WgXcQ" allowfullscreen></iframe>
-                                <div class="carousel-caption d-none d-md-block">
-                                    <h5>Zawód na luzie 1</h5>
-                                    <p>Opis zawodu.</p>
-                                </div>
-                            </div>
-                            <div class="carousel-item">
-                                <iframe src="https://www.youtube.com/embed/dQw4w9WgXcQ" allowfullscreen></iframe>
-                                <div class="carousel-caption d-none d-md-block">
-                                    <h5>Zawód na luzie 2</h5>
-                                    <p>Opis zawodu.</p>
-                                </div>
-                            </div>
-                            <div class="carousel-item">
-                                <iframe src="https://www.youtube.com/embed/dQw4w9WgXcQ" allowfullscreen></iframe>
-                                <div class="carousel-caption d-none d-md-block">
-                                    <h5>Zawód na luzie 3</h5>
-                                    <p>Opis zawodu.</p>
-                                </div>
+            <div id="absolwenci-grid" class="grid-view d-none">
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="card">
+                            <iframe src="https://www.youtube.com/embed/dQw4w9WgXcQ" allowfullscreen></iframe>
+                            <div class="card-body">
+                                <h6 class="card-title">Film absolwenta 1</h6>
+                                <p class="card-text small">Opis filmu absolwenta.</p>
                             </div>
                         </div>
-                        <button class="carousel-control-prev" type="button" data-bs-target="#zawodCarousel" data-bs-slide="prev">
-                            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                            <span class="visually-hidden">Previous</span>
-                        </button>
-                        <button class="carousel-control-next" type="button" data-bs-target="#zawodCarousel" data-bs-slide="next">
-                            <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                            <span class="visually-hidden">Next</span>
-                        </button>
                     </div>
-                </div>
-                <div id="zawod-grid" class="grid-view d-none">
-                    <div class="row">
-                        <div class="col-md-4">
-                            <div class="card">
-                                <iframe src="https://www.youtube.com/embed/dQw4w9WgXcQ" allowfullscreen></iframe>
-                                <div class="card-body">
-                                    <h6 class="card-title">Zawód na luzie 1</h6>
-                                    <p class="card-text small">Opis zawodu.</p>
-                                </div>
+                    <div class="col-md-4">
+                        <div class="card">
+                            <iframe src="https://www.youtube.com/embed/dQw4w9WgXcQ" allowfullscreen></iframe>
+                            <div class="card-body">
+                                <h6 class="card-title">Film absolwenta 2</h6>
+                                <p class="card-text small">Opis filmu absolwenta.</p>
                             </div>
                         </div>
-                        <div class="col-md-4">
-                            <div class="card">
-                                <iframe src="https://www.youtube.com/embed/dQw4w9WgXcQ" allowfullscreen></iframe>
-                                <div class="card-body">
-                                    <h6 class="card-title">Zawód na luzie 2</h6>
-                                    <p class="card-text small">Opis zawodu.</p>
-                                </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card">
+                            <iframe src="https://www.youtube.com/embed/dQw4w9WgXcQ" allowfullscreen></iframe>
+                            <div class="card-body">
+                                <h6 class="card-title">Film absolwenta 3</h6>
+                                <p class="card-text small">Opis filmu absolwenta.</p>
                             </div>
                         </div>
-                        <div class="col-md-4">
-                            <div class="card">
-                                <iframe src="https://www.youtube.com/embed/dQw4w9WgXcQ" allowfullscreen></iframe>
-                                <div class="card-body">
-                                    <h6 class="card-title">Zawód na luzie 3</h6>
-                                    <p class="card-text small">Opis zawodu.</p>
-                                </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card">
+                            <iframe src="https://www.youtube.com/embed/dQw4w9WgXcQ" allowfullscreen></iframe>
+                            <div class="card-body">
+                                <h6 class="card-title">Film absolwenta 4</h6>
+                                <p class="card-text small">Opis filmu absolwenta.</p>
                             </div>
                         </div>
-                        <div class="col-md-4">
-                            <div class="card">
-                                <iframe src="https://www.youtube.com/embed/dQw4w9WgXcQ" allowfullscreen></iframe>
-                                <div class="card-body">
-                                    <h6 class="card-title">Zawód na luzie 4</h6>
-                                    <p class="card-text small">Opis zawodu.</p>
-                                </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card">
+                            <iframe src="https://www.youtube.com/embed/dQw4w9WgXcQ" allowfullscreen></iframe>
+                            <div class="card-body">
+                                <h6 class="card-title">Film absolwenta 5</h6>
+                                <p class="card-text small">Opis filmu absolwenta.</p>
                             </div>
                         </div>
-                        <div class="col-md-4">
-                            <div class="card">
-                                <iframe src="https://www.youtube.com/embed/dQw4w9WgXcQ" allowfullscreen></iframe>
-                                <div class="card-body">
-                                    <h6 class="card-title">Zawód na luzie 5</h6>
-                                    <p class="card-text small">Opis zawodu.</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-4">
-                            <div class="card">
-                                <iframe src="https://www.youtube.com/embed/dQw4w9WgXcQ" allowfullscreen></iframe>
-                                <div class="card-body">
-                                    <h6 class="card-title">Zawód na luzie 6</h6>
-                                    <p class="card-text small">Opis zawodu.</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-4">
-                            <div class="card">
-                                <iframe src="https://www.youtube.com/embed/dQw4w9WgXcQ" allowfullscreen></iframe>
-                                <div class="card-body">
-                                    <h6 class="card-title">Zawód na luzie 7</h6>
-                                    <p class="card-text small">Opis zawodu.</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-4">
-                            <div class="card">
-                                <iframe src="https://www.youtube.com/embed/dQw4w9WgXcQ" allowfullscreen></iframe>
-                                <div class="card-body">
-                                    <h6 class="card-title">Zawód na luzie 8</h6>
-                                    <p class="card-text small">Opis zawodu.</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-4">
-                            <div class="card">
-                                <iframe src="https://www.youtube.com/embed/dQw4w9WgXcQ" allowfullscreen></iframe>
-                                <div class="card-body">
-                                    <h6 class="card-title">Zawód na luzie 9</h6>
-                                    <p class="card-text small">Opis zawodu.</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-4">
-                            <div class="card">
-                                <iframe src="https://www.youtube.com/embed/dQw4w9WgXcQ" allowfullscreen></iframe>
-                                <div class="card-body">
-                                    <h6 class="card-title">Zawód na luzie 10</h6>
-                                    <p class="card-text small">Opis zawodu.</p>
-                                </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card">
+                            <iframe src="https://www.youtube.com/embed/dQw4w9WgXcQ" allowfullscreen></iframe>
+                            <div class="card-body">
+                                <h6 class="card-title">Film absolwenta 6</h6>
+                                <p class="card-text small">Opis filmu absolwenta.</p>
                             </div>
                         </div>
                     </div>
@@ -357,8 +170,86 @@
         </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script>
+    <div class="section-card mb-4 p-4">
+        <h2 class="section-title"><i class="bi bi-tools me-2"></i> Zawód na luzie</h2>
+        <div class="section-content">
+            <button class="view-toggle" id="toggle-zawod" title="Przełącz na widok siatki">
+                <i class="bi bi-grid"></i>
+            </button>
+            <div id="zawod-carousel" class="carousel-view">
+                <div id="zawodCarousel" class="carousel slide" data-bs-ride="carousel">
+                    <div class="carousel-inner">
+                        <div class="carousel-item active">
+                            <iframe src="https://www.youtube.com/embed/dQw4w9WgXcQ" allowfullscreen></iframe>
+                            <div class="carousel-caption d-none d-md-block">
+                                <h5>Zawód na luzie 1</h5>
+                                <p>Opis zawodu.</p>
+                            </div>
+                        </div>
+                        <div class="carousel-item">
+                            <iframe src="https://www.youtube.com/embed/dQw4w9WgXcQ" allowfullscreen></iframe>
+                            <div class="carousel-caption d-none d-md-block">
+                                <h5>Zawód na luzie 2</h5>
+                                <p>Opis zawodu.</p>
+                            </div>
+                        </div>
+                        <div class="carousel-item">
+                            <iframe src="https://www.youtube.com/embed/dQw4w9WgXcQ" allowfullscreen></iframe>
+                            <div class="carousel-caption d-none d-md-block">
+                                <h5>Zawód na luzie 3</h5>
+                                <p>Opis zawodu.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <button class="carousel-control-prev" type="button" data-bs-target="#zawodCarousel" data-bs-slide="prev">
+                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">Previous</span>
+                    </button>
+                    <button class="carousel-control-next" type="button" data-bs-target="#zawodCarousel" data-bs-slide="next">
+                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">Next</span>
+                    </button>
+                </div>
+            </div>
+            <div id="zawod-grid" class="grid-view d-none">
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="card">
+                            <iframe src="https://www.youtube.com/embed/dQw4w9WgXcQ" allowfullscreen></iframe>
+                            <div class="card-body">
+                                <h6 class="card-title">Zawód na luzie 1</h6>
+                                <p class="card-text small">Opis zawodu.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card">
+                            <iframe src="https://www.youtube.com/embed/dQw4w9WgXcQ" allowfullscreen></iframe>
+                            <div class="card-body">
+                                <h6 class="card-title">Zawód na luzie 2</h6>
+                                <p class="card-text small">Opis zawodu.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card">
+                            <iframe src="https://www.youtube.com/embed/dQw4w9WgXcQ" allowfullscreen></iframe>
+                            <div class="card-body">
+                                <h6 class="card-title">Zawód na luzie 3</h6>
+                                <p class="card-text small">Opis zawodu.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Aby nie tworzyć konfliktów z innymi plikami, dobrą praktyką jest 
+    // umieszczanie kodu we wczytywanych modułach w anonimowej funkcji (IIFE)
+    (function() {
         // Funkcja do przełączania widoków
         function toggleView(section) {
             const carousel = document.getElementById(`${section}-carousel`);
@@ -381,9 +272,15 @@
             }
         }
 
-        // Dodaj event listenery
-        document.getElementById('toggle-absolwenci').addEventListener('click', () => toggleView('absolwenci'));
-        document.getElementById('toggle-zawod').addEventListener('click', () => toggleView('zawod'));
-    </script>
-</body>
-</html>
+        // Dodaj event listenery tylko jeśli elementy istnieją
+        const toggleAbsolwenciBtn = document.getElementById('toggle-absolwenci');
+        const toggleZawodBtn = document.getElementById('toggle-zawod');
+
+        if (toggleAbsolwenciBtn) {
+            toggleAbsolwenciBtn.addEventListener('click', () => toggleView('absolwenci'));
+        }
+        if (toggleZawodBtn) {
+            toggleZawodBtn.addEventListener('click', () => toggleView('zawod'));
+        }
+    })();
+</script>
