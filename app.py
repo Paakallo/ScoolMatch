@@ -105,14 +105,14 @@ def home():
         
     if Wydarzenie.query.count() == 0:
         example_events = [
-            Wydarzenie(typ="Dni Otwarte", nazwa_wydarzenia="Dni Otwarte - Profil Informatyczny", data=datetime(2026, 3, 14, 10, 0), szkola="Technikum Łączności nr 4 w Gdańsku", odleglosc=4.5),
-            Wydarzenie(typ="Warsztaty", nazwa_wydarzenia="Warsztaty: Zbuduj swojego robota", data=datetime(2026, 3, 21, 12, 0), szkola="Zespół Szkół Chłodniczych i Elektronicznych", odleglosc=8.2),
-            Wydarzenie(typ="Doradztwo", nazwa_wydarzenia="Spotkanie z doradcą zawodowym", data=datetime(2026, 3, 25, 15, 0), szkola="Centrum Kształcenia Zawodowego", odleglosc=2.1),
-            Wydarzenie(typ="Dni Otwarte", nazwa_wydarzenia="Dzień Otwarty - Klasy mundurowe", data=datetime(2026, 4, 5, 9, 0), szkola="Liceum Ogólnokształcące nr VII", odleglosc=12.0),
-            Wydarzenie(typ="Targi", nazwa_wydarzenia="Targi Edukacyjne Trójmiasta", data=datetime(2026, 4, 10, 10, 0), szkola="AmberExpo Gdańsk", odleglosc=6.5),
-            Wydarzenie(typ="Dni Otwarte", nazwa_wydarzenia="Poznaj szkołę morską", data=datetime(2026, 4, 18, 11, 0), szkola="Zespół Szkół Morskich", odleglosc=3.0),
-            Wydarzenie(typ="Dni Otwarte", nazwa_wydarzenia="Dni Otwarte Technikum Leśnego", data=datetime(2026, 4, 22, 9, 0), szkola="Technikum Leśne (Sopot)", odleglosc=18.5),
-            Wydarzenie(typ="Warsztaty", nazwa_wydarzenia="Warsztaty gastronomiczne", data=datetime(2026, 5, 10, 10, 0), szkola="Zespół Szkół Gastronomicznych (Gdynia)", odleglosc=25.0)
+            Wydarzenie(typ="Dni Otwarte", nazwa_wydarzenia="Dni Otwarte - Profil Informatyczny", data=datetime(2026, 3, 14, 10, 0), szkola="Technikum Łączności nr 4 w Gdańsku", odleglosc=4.5, opis="Zobacz nasze nowoczesne pracownie komputerowe! W programie pokazy programowania robotów, rozmowy z nauczycielami przedmiotów zawodowych oraz prezentacja projektów tworzonych przez naszych uczniów na zaliczenia."),
+            Wydarzenie(typ="Warsztaty", nazwa_wydarzenia="Warsztaty: Zbuduj swojego robota", data=datetime(2026, 3, 21, 12, 0), szkola="Zespół Szkół Chłodniczych i Elektronicznych", odleglosc=8.2, opis="Praktyczne warsztaty dla ósmoklasistów. Nauczysz się podstaw lutowania i programowania mikrokontrolerów. Zbudowanego robota typu line-follower będziesz mógł zabrać do domu! Obowiązują zapisy na stronie szkoły."),
+            Wydarzenie(typ="Doradztwo", nazwa_wydarzenia="Spotkanie z doradcą zawodowym", data=datetime(2026, 3, 25, 15, 0), szkola="Centrum Kształcenia Zawodowego", odleglosc=2.1, opis="Nie wiesz, jaką ścieżkę wybrać po 8 klasie? Przyjdź na darmowe, indywidualne konsultacje z doradcą zawodowym. Zrobimy wspólnie testy predyspozycji i omówimy możliwości na gdańskim rynku pracy."),
+            Wydarzenie(typ="Dni Otwarte", nazwa_wydarzenia="Dzień Otwarty - Klasy mundurowe", data=datetime(2026, 4, 5, 9, 0), szkola="Liceum Ogólnokształcące nr VII", odleglosc=12.0, opis="Pokazy musztry, ćwiczenia z pierwszej pomocy taktycznej i spotkania z przedstawicielami służb mundurowych (policja, wojsko, straż graniczna). Sprawdź, czy klasa o profilu mundurowym to coś dla Ciebie."),
+            Wydarzenie(typ="Targi", nazwa_wydarzenia="Targi Edukacyjne Trójmiasta", data=datetime(2026, 4, 10, 10, 0), szkola="AmberExpo Gdańsk", odleglosc=6.5, opis="Wszystkie szkoły średnie z całego Trójmiasta w jednym miejscu! Znakomita okazja, aby w ciągu jednego dnia zebrać ulotki, porównać oferty i porozmawiać ze starszymi kolegami ze szkół, które Cię interesują."),
+            Wydarzenie(typ="Dni Otwarte", nazwa_wydarzenia="Poznaj szkołę morską", data=datetime(2026, 4, 18, 11, 0), szkola="Zespół Szkół Morskich", odleglosc=3.0, opis="Poczuj wiatr w żaglach! Zapraszamy do zwiedzania symulatorów nawigacyjnych i siłowni okrętowych. Dowiesz się, jak wygląda nauka zawodu marynarza i logistyka morskiego oraz jakie są perspektywy pracy na morzu."),
+            Wydarzenie(typ="Dni Otwarte", nazwa_wydarzenia="Dni Otwarte Technikum Leśnego", data=datetime(2026, 4, 22, 9, 0), szkola="Technikum Leśne (Sopot)", odleglosc=18.5, opis="Interesujesz się przyrodą i ekologią? Odwiedź naszą szkołę! W programie pokazy sokolnictwa, rozpoznawanie tropów zwierząt oraz prezentacja nowoczesnego sprzętu leśnego."),
+            Wydarzenie(typ="Warsztaty", nazwa_wydarzenia="Warsztaty gastronomiczne", data=datetime(2026, 5, 10, 10, 0), szkola="Zespół Szkół Gastronomicznych (Gdynia)", odleglosc=25.0, opis="Zasmakuj w karierze kucharza! Zapraszamy na wspólne przygotowywanie włoskiej pizzy i deserów pod okiem szefów kuchni. Poznasz tajniki pracy w nowoczesnej kuchni restauracyjnej.")
         ]
         db.session.add_all(example_events)
         db.session.commit()
@@ -151,13 +151,13 @@ def olimpiady_view():
             olimpiada.arkusze_list = []
 
     return render_template('olimpiady.html', olimpiady=olimpiady)
+
 @app.route('/api/events')
 def api_events():
     events = Wydarzenie.query.all()
     result = []
     
     for ev in events:
-        # Dobieramy ikonę Bootstrapa na podstawie typu wydarzenia
         icon = "bi-calendar-event"
         if ev.typ == "Dni Otwarte": icon = "bi-door-open"
         elif ev.typ == "Warsztaty": icon = "bi-tools"
@@ -171,7 +171,8 @@ def api_events():
             "date": ev.data.strftime('%Y-%m-%d'),
             "distance": ev.odleglosc or 0.0,
             "type": ev.typ,
-            "icon": icon
+            "icon": icon,
+            "description": ev.opis or "Brak opisu dla tego wydarzenia." # Przesyłamy opis
         })
         
     return jsonify(result)
