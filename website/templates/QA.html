@@ -8,17 +8,20 @@
     <div class="sticky-progress mx-n5 px-5">
         <div class="container" style="max-width: 800px;">
             <div class="d-flex justify-content-between small text-muted mb-1">
-                <span>Postęp:</span>
+                <span>Postęp całego testu:</span>
                 <span id="progress-text">0 / 90</span>
             </div>
             <div class="progress" style="height: 10px;">
                 <div id="progress-bar" class="progress-bar bg-success" role="progressbar" style="width: 0%;"></div>
             </div>
+            <div class="text-center small text-primary fw-bold mt-2" id="page-indicator">
+                Strona 1 z 18
+            </div>
         </div>
     </div>
 
-    <div class="container py-3" style="max-width: 800px;">
-        <div class="text-center mb-5">
+    <div class="container py-3" style="max-width: 800px;" id="questions-top">
+        <div class="text-center mb-4">
             <h1 class="display-5 fw-bold text-primary">Poznaj siebie!</h1>
             <p class="lead text-muted">Zaznacz opcję "Zgadzam się" przy stwierdzeniach, które do Ciebie pasują.</p>
         </div>
@@ -26,9 +29,18 @@
         <form id="holland-form">
             <div id="questions-container"></div>
 
-            <div class="d-grid gap-2 mt-5">
-                <button type="submit" id="submit-btn" class="btn btn-primary btn-lg py-3 rounded-pill shadow">
-                    <span id="submit-text">Zakończ test i zobacz wyniki</span>
+            <div class="d-flex justify-content-between mt-4 mb-5" id="pagination-controls">
+                <button type="button" class="btn btn-outline-secondary px-4 fw-bold" id="prev-btn" disabled>
+                    <i class="bi bi-arrow-left me-1"></i> Wróć
+                </button>
+                <button type="button" class="btn btn-primary px-4 fw-bold" id="next-btn">
+                    Dalej <i class="bi bi-arrow-right ms-1"></i>
+                </button>
+            </div>
+
+            <div id="submit-btn-container" class="d-grid gap-2 mt-4 mb-5 d-none">
+                <button type="submit" id="submit-btn" class="btn btn-success btn-lg py-3 rounded-pill shadow">
+                    <span id="submit-text"><i class="bi bi-check-circle-fill me-2"></i> Zakończ test i zobacz wyniki</span>
                     <span id="submit-spinner" class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
                 </button>
             </div>
@@ -83,13 +95,22 @@
         const categories = ['R', 'B', 'A', 'S', 'P', 'K'];
         const container = document.getElementById('questions-container');
         let htmlContent = '';
+        
+        const questionsPerPage = 5;
+        const totalPages = Math.ceil(questions.length / questionsPerPage);
+        let currentPage = 1;
 
+        // Generujemy wszystkie pytania, dodajemy atrybut data-page
         questions.forEach((q, index) => {
             const i = index + 1;
             const category = categories[index % 6];
+            const pageNum = Math.ceil(i / questionsPerPage);
+
+            // Klasa 'd-none' domyślnie dodana do pytań z innych stron niż pierwsza
+            const visibilityClass = (pageNum === 1) ? '' : 'd-none';
 
             htmlContent += `
-            <div class="card shadow-sm mb-3 question-card border-0">
+            <div class="card shadow-sm mb-3 question-card border-0 question-item ${visibilityClass}" data-page="${pageNum}">
                 <div class="card-body d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
                     <span class="fs-5 text-dark">
                         <strong>${i}.</strong> ${q}
@@ -108,6 +129,56 @@
 
         if(container) { container.innerHTML = htmlContent; }
 
+        // --- Logika Paginacji ---
+        const prevBtn = document.getElementById('prev-btn');
+        const nextBtn = document.getElementById('next-btn');
+        const submitBtnContainer = document.getElementById('submit-btn-container');
+        const paginationControls = document.getElementById('pagination-controls');
+        const pageIndicator = document.getElementById('page-indicator');
+
+        function renderPage(page) {
+            // Ukrywa wszystkie pytania i pokazuje tylko te z bieżącej strony
+            document.querySelectorAll('.question-item').forEach(item => {
+                if (parseInt(item.getAttribute('data-page')) === page) {
+                    item.classList.remove('d-none');
+                } else {
+                    item.classList.add('d-none');
+                }
+            });
+
+            // Aktualizacja przycisków
+            prevBtn.disabled = (page === 1);
+            pageIndicator.innerText = `Strona ${page} z ${totalPages}`;
+
+            if (page === totalPages) {
+                // Ukrywamy przycisk "Dalej", pokazujemy zielony "Zakończ test"
+                nextBtn.classList.add('d-none');
+                submitBtnContainer.classList.remove('d-none');
+            } else {
+                // Pokazujemy "Dalej", ukrywamy "Zakończ test"
+                nextBtn.classList.remove('d-none');
+                submitBtnContainer.classList.add('d-none');
+            }
+
+            // Płynne przeskoczenie na górę po zmianie strony
+            document.getElementById('questions-top').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        prevBtn.addEventListener('click', () => {
+            if (currentPage > 1) {
+                currentPage--;
+                renderPage(currentPage);
+            }
+        });
+
+        nextBtn.addEventListener('click', () => {
+            if (currentPage < totalPages) {
+                currentPage++;
+                renderPage(currentPage);
+            }
+        });
+
+        // --- Pasek postępu (Działa na wszystkich 90 pytaniach mimo podziału stron) ---
         const allRadioButtons = document.querySelectorAll('.answer-btn');
         const progressBar = document.getElementById('progress-bar');
         const progressText = document.getElementById('progress-text');
@@ -124,12 +195,11 @@
             });
         });
 
-        // Wysłanie danych do serwera Flask
+        // --- Wysłanie danych do serwera Flask ---
         const form = document.getElementById('holland-form');
         form.addEventListener('submit', async (e) => {
-            e.preventDefault(); // Zatrzymuje klasyczne przeładowanie strony
+            e.preventDefault(); 
 
-            // Pokazujemy animację ładowania
             document.getElementById('submit-text').classList.add('d-none');
             document.getElementById('submit-spinner').classList.remove('d-none');
             document.getElementById('submit-btn').disabled = true;
@@ -138,7 +208,6 @@
             const data = Object.fromEntries(formData.entries());
 
             try {
-                // Zapytanie pod Twój endpoint we Flasku
                 const response = await fetch('/api/oblicz-wynik', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -149,7 +218,6 @@
 
                 const result = await response.json();
 
-                // NOWE: Zapisujemy wynik do pamięci przeglądarki (profilu)
                 localStorage.setItem('sm_qa_result', JSON.stringify({
                     nazwa: result.details.nazwa,
                     score: result.score,
@@ -157,22 +225,22 @@
                     zawody: result.details.zawody
                 }));
 
-                // Ukrywamy test i pokazujemy wyniki
                 document.getElementById('test-view').classList.add('d-none');
                 document.getElementById('result-view').classList.remove('d-none');
 
-                // Podmieniamy dane w widoku wynikowym
                 document.getElementById('res-title').innerText = result.details.nazwa;
                 document.getElementById('res-score').innerText = `Zgodność: ${result.score} pkt`;
                 document.getElementById('res-desc').innerText = result.details.opis;
                 document.getElementById('res-work').innerText = result.details.praca;
                 document.getElementById('res-jobs').innerText = result.details.zawody;
 
+                // Przewinięcie na samą górę do wyników
+                window.scrollTo(0, 0);
+
             } catch (error) {
                 console.error("Błąd zapisu testu:", error);
                 alert("Wystąpił błąd przy połączeniu z serwerem. Upewnij się, że aplikacja we Flasku jest włączona.");
 
-                // Powrót przycisku do normy po błędzie
                 document.getElementById('submit-text').classList.remove('d-none');
                 document.getElementById('submit-spinner').classList.add('d-none');
                 document.getElementById('submit-btn').disabled = false;
