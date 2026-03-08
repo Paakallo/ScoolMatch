@@ -45,6 +45,7 @@ class Wydarzenie(db.Model):
     data = db.Column(db.DateTime, nullable=False)
     szkola = db.Column(db.String(255), nullable=True)  # Dodane: nazwa szkoły / miejsca
     odleglosc = db.Column(db.Float, nullable=True)     # Dodane: dystans w km
+    opis = db.Column(db.Text, nullable=True)           # NOWE POLE: Opis wydarzenia
 
     def __repr__(self):
         return f'<Wydarzenie {self.nazwa_wydarzenia}>'
