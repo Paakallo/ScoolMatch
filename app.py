@@ -4,14 +4,11 @@ from datetime import datetime, timedelta
 import json
 import os
 
-# Wskazujemy Flaskowi poprawny folder z szablonami
 app = Flask(__name__, template_folder='website/templates', static_folder='website/static')
 
-# Konfiguracja bazy danych SQLite - w głównym katalogu projektu
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///./scoolmatch.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
-# Inicjalizacja bazy danych
 db.init_app(app)
 holland_descriptions = {
     "R": {
@@ -54,10 +51,8 @@ holland_descriptions = {
 
 @app.route('/')
 def home():
-    # Tworzymy tabele przy pierwszym załadowaniu
     db.create_all()
 
-    # Dodajemy przykładowe dane, jeśli baza jest pusta
     if School.query.count() == 0:
         example_schools = [
             School(
@@ -132,7 +127,6 @@ def home():
 
 @app.route('/<module_name>')
 def serve_module(module_name):
-    # Sprawdzamy, czy plik kończy się na .html, żeby było bezpieczniej
     if module_name.endswith('.html'):
         return render_template(module_name)
     return "Nie znaleziono", 404
@@ -148,7 +142,6 @@ def schools_view():
 def olimpiady_view():
     olimpiady = Olimpiada.query.order_by(Olimpiada.data.asc()).all()
 
-    # Przetwarzamy pole pdf na łatwą w obsłudze listę
     for olimpiada in olimpiady:
         if olimpiada.pdf and olimpiada.pdf.startswith('['):
             try:
@@ -193,14 +186,11 @@ def get_specialties():
     schools = School.query.all()
     specialties = set()
 
-    # Zbieramy wszystkie specjalności z każdej szkoły (oddzielone przecinkami)
     for school in schools:
         if school.specjalnosci:
-            # Dzielimy po przecinku i usuwamy whitespace
             specs = [spec.strip() for spec in school.specjalnosci.split(',')]
             specialties.update(specs)
 
-    # Sortujemy alfabetycznie
     specialties_list = sorted(list(specialties))
 
     return jsonify({'specialties': specialties_list})
@@ -215,39 +205,31 @@ def filter_schools():
     school_type = data.get('type', '')
     specialties = data.get('specialties', [])
     has_dorm = data.get('dormitory', '')
-    has_scholarship = data.get('scholarship', '')  # NOWY PARAMETR
+    has_scholarship = data.get('scholarship', '')  
     max_distance = data.get('distance', 50)
 
-    # Budujemy zapytanie
     query = School.query
 
-    # Filtrowanie po typie szkoły
     if school_type:
         query = query.filter_by(typ=school_type)
 
-    # Filtrowanie po specjalnościach (szkoła musi mieć przynajmniej jedną z wybranych specjalności)
     if specialties:
-        # Tworzymy warunki OR dla każdej specjalności
         specialty_conditions = []
         for specialty in specialties:
             specialty_conditions.append(School.specjalnosci.contains(specialty))
-        # Łączymy warunki OR
         from sqlalchemy import or_
         query = query.filter(or_(*specialty_conditions))
 
-    # Filtrowanie po internecie/bursie
     if has_dorm == 'Tak':
         query = query.filter_by(internat=True)
     elif has_dorm == 'Nie':
         query = query.filter_by(internat=False)
 
-    # NOWE: Filtrowanie po stypendium
     if has_scholarship == 'Tak':
         query = query.filter_by(stypendium=True)
     elif has_scholarship == 'Nie':
         query = query.filter_by(stypendium=False)
 
-    # Filtrowanie po odległości
     try:
         max_distance = float(max_distance)
         query = query.filter(School.odleglosc <= max_distance)
@@ -256,14 +238,11 @@ def filter_schools():
 
     schools = query.all()
 
-    # Zwracamy wyniki jako zaktualizowany, nowoczesny HTML
     result_html = ''
     if schools:
         for school in schools:
-            # Nowoczesne odznaki (badges) z Bootstrap 5
             internat_badge = '<span class="badge bg-success bg-opacity-10 text-success border border-success-subtle"><i class="bi bi-house-door-fill me-1"></i>Internat</span>' if school.internat else '<span class="badge bg-secondary bg-opacity-10 text-secondary border border-secondary-subtle"><i class="bi bi-house-x-fill me-1"></i>Bez internatu</span>'
 
-            # Nowoczesna plakietka stypendium (pomarańczowa/żółta)
             stypendium_badge = '<span class="badge bg-warning bg-opacity-10 text-warning border border-warning-subtle"><i class="bi bi-cash-coin me-1"></i>Stypendium</span>' if school.stypendium else ''
 
             specjalnosci_html = f'<div class="small text-muted mt-2"><strong><i class="bi bi-book me-1"></i>Specjalności:</strong> {school.specjalnosci}</div>'
@@ -307,32 +286,25 @@ def filter_schools():
 
 @app.route('/api/oblicz-wynik', methods=['POST'])
 def oblicz_wynik():
-    # Pobranie danych JSON wysłanych z frontendu
     answers = request.get_json()
 
     if not answers:
         return jsonify({"error": "Brak danych"}), 400
 
-    # Inicjacja liczników
     scores = {'R': 0, 'B': 0, 'A': 0, 'S': 0, 'P': 0, 'K': 0}
 
-    # Przeliczanie odpowiedzi
     for question_id, answer in answers.items():
         if answer == "tak":
-            # question_id ma format "R_q1", więc pierwsza litera to typ
             category = question_id[0]
             if category in scores:
                 scores[category] += 1
 
-    # Sortowanie wyników malejąco i wybór najwyższego
-    # scores.items() zwraca krotki (typ, punkty), sortujemy po punktach
     sorted_scores = sorted(scores.items(), key=lambda item: item[1], reverse=True)
 
     top_type_key = sorted_scores[0][0]
     top_score = sorted_scores[0][1]
     result_data = holland_descriptions.get(top_type_key)
 
-    # Zwrócenie wyniku jako JSON
     return jsonify({
         "topType": top_type_key,
         "score": top_score,

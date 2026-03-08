@@ -6,7 +6,6 @@
     .event-date-box .month { font-size: 0.85rem; text-transform: uppercase; font-weight: 600; color: #6c757d; }
     .btn-save-event { transition: all 0.2s; }
     .btn-save-event:hover { transform: scale(1.1); }
-    /* Nowa klasa ułatwiająca klikanie w kartę */
     .clickable-area { cursor: pointer; }
 </style>
 
@@ -76,12 +75,10 @@
         const distanceRange = document.getElementById('distanceRange');
         const distanceValue = document.getElementById('distanceValue');
 
-        // Funkcja do pokazywania szczegółów w Modalu
         window.showEventModal = function(eventId) {
             const ev = allEvents.find(e => e.id === eventId);
             if (!ev) return;
             
-            // Podmiana danych w Modalu
             document.getElementById('modalEventTitle').innerText = ev.title;
             document.getElementById('modalEventSchool').innerText = ev.school;
             document.getElementById('modalEventType').innerHTML = `<i class="bi ${ev.icon} me-1"></i> ${ev.type}`;
@@ -89,7 +86,6 @@
             document.getElementById('modalEventDistance').innerText = ev.distance.toFixed(1);
             document.getElementById('modalEventDescription').innerText = ev.description;
             
-            // Otwieranie Modala z wykorzystaniem Bootstrapa
             const modal = new bootstrap.Modal(document.getElementById('eventModal'));
             modal.show();
         };
@@ -152,7 +148,7 @@
 
                 document.querySelectorAll('.btn-save-event').forEach(btn => {
                     btn.addEventListener('click', function(e) {
-                        e.stopPropagation(); // Zapobiega ewentualnemu kliknięciu karty pod spodem
+                        e.stopPropagation(); 
                         const evId = parseInt(this.getAttribute('data-id'));
                         const evObj = allEvents.find(e => e.id === evId);
                         let saved = getSavedEvents();

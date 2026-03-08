@@ -13,7 +13,6 @@
     <div class="card profile-card mb-4">
         <div class="profile-header text-center">
             <h2 class="fw-bold mb-0">Twój profil</h2>
-            <!-- <p class="mb-0 text-white-50">Uzupełnij profil, byśmy mogli lepiej dopasować szkoły do Ciebie.</p> -->
         </div>
 
         <div class="card-body px-4 pb-4 text-center text-md-start">
@@ -125,7 +124,6 @@
 
 <script>
     (function() {
-        // --- 1. LOGIKA PROFILU UŻYTKOWNIKA ---
         const uploadBtn = document.getElementById('upload-btn');
         const imageUpload = document.getElementById('image-upload');
         const avatarImage = document.getElementById('avatar-image');
@@ -172,7 +170,6 @@
                     avatarImage.src = e.target.result;
                     localStorage.setItem('sm_avatar', e.target.result);
 
-                    // Wywołaj funkcję z index.html, aby odświeżyć miniaturkę w menu
                     if (typeof window.updateSidebarAvatar === 'function') {
                         window.updateSidebarAvatar();
                     }
@@ -201,7 +198,6 @@
             });
         }
 
-        // --- 2. LOGIKA ZAPISANYCH WYDARZEŃ ---
         const savedEventsContainer = document.getElementById('saved-events-container');
         const noSavedEventsMsg = document.getElementById('no-saved-events');
 
@@ -242,7 +238,6 @@
             }
         }
 
-        // --- 3. LOGIKA WYNIKÓW TESTU QA ---
         function loadQAResult() {
             const qaDataStr = localStorage.getItem('sm_qa_result');
             const resultContainer = document.getElementById('qa-result-container');
@@ -251,23 +246,19 @@
             if (qaDataStr) {
                 const qaData = JSON.parse(qaDataStr);
                 
-                // Wypełniamy dane
                 document.getElementById('profile-qa-title').innerText = qaData.nazwa;
                 document.getElementById('profile-qa-score').innerText = `${qaData.score} pkt`;
                 document.getElementById('profile-qa-desc').innerText = qaData.opis;
                 document.getElementById('profile-qa-jobs').innerText = qaData.zawody;
 
-                // Pokazujemy kontener z wynikami, ukrywamy zachętę
                 resultContainer.classList.remove('d-none');
                 noResultContainer.classList.add('d-none');
             } else {
-                // Jeśli brak wyników, pokazujemy tylko zachętę
                 resultContainer.classList.add('d-none');
                 noResultContainer.classList.remove('d-none');
             }
         }
 
-        // Inicjalizacja przy wejściu w profil
         loadSavedProfile();
         renderSavedEvents();
         loadQAResult();
