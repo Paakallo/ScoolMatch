@@ -194,6 +194,7 @@ def get_specialties():
 
     return jsonify({'specialties': specialties_list})
 
+
 @app.route('/filter-schools', methods=['POST'])
 def filter_schools():
     """Endpoint do filtrowania szkół na podstawie kryteriów"""
@@ -203,7 +204,7 @@ def filter_schools():
     school_type = data.get('type', '')
     specialties = data.get('specialties', [])
     has_dorm = data.get('dormitory', '')
-    has_scholarship = data.get('scholarship', '') # NOWY PARAMETR
+    has_scholarship = data.get('scholarship', '')  # NOWY PARAMETR
     max_distance = data.get('distance', 50)
 
     # Budujemy zapytanie
@@ -244,33 +245,52 @@ def filter_schools():
 
     schools = query.all()
 
-    # Zwracamy wyniki jako HTML
+    # Zwracamy wyniki jako zaktualizowany, nowoczesny HTML
     result_html = ''
     if schools:
         for school in schools:
-            internat_badge = '<span class="badge bg-success">Internat</span>' if school.internat else '<span class="badge bg-danger">Bez internatu</span>'
-            # Dodajemy plakietkę stypendium
-            stypendium_badge = '<span class="badge bg-info text-dark ms-1"><i class="bi bi-cash-coin"></i> Oferuje stypendium</span>' if school.stypendium else ''
-            
-            specjalnosci_html = f'<div class="small text-muted mt-2"><strong>Specjalności:</strong> {school.specjalnosci}</div>'
-            result_html += f'''<li class="list-group-item">
-                <div class="d-flex justify-content-between align-items-start">
-                    <div>
-                        <strong>{school.nazwa}</strong>
-                        <div class="small text-muted mt-1">
-                            <span class="badge bg-secondary">{school.typ}</span>
-                            {internat_badge}
-                            {stypendium_badge}
+            # Nowoczesne odznaki (badges) z Bootstrap 5
+            internat_badge = '<span class="badge bg-success bg-opacity-10 text-success border border-success-subtle"><i class="bi bi-house-door-fill me-1"></i>Internat</span>' if school.internat else '<span class="badge bg-secondary bg-opacity-10 text-secondary border border-secondary-subtle"><i class="bi bi-house-x-fill me-1"></i>Bez internatu</span>'
+
+            # Nowoczesna plakietka stypendium (pomarańczowa/żółta)
+            stypendium_badge = '<span class="badge bg-warning bg-opacity-10 text-warning border border-warning-subtle"><i class="bi bi-cash-coin me-1"></i>Stypendium</span>' if school.stypendium else ''
+
+            specjalnosci_html = f'<div class="small text-muted mt-2"><strong><i class="bi bi-book me-1"></i>Specjalności:</strong> {school.specjalnosci}</div>'
+
+            result_html += f'''
+            <div class="card school-card shadow-sm border-0 mb-3">
+                <div class="card-body p-4 d-flex flex-column flex-md-row justify-content-between align-items-md-center">
+
+                    <div class="d-flex align-items-start mb-3 mb-md-0">
+                        <div class="school-icon-box me-3 flex-shrink-0 shadow-sm border">
+                            <i class="bi bi-mortarboard"></i>
                         </div>
-                        {specjalnosci_html}
+                        <div>
+                            <h5 class="fw-bold mb-1 text-dark">{school.nazwa}</h5>
+                            <div class="d-flex flex-wrap gap-2 mb-2 mt-2">
+                                <span class="badge bg-primary bg-opacity-10 text-primary border border-primary-subtle">
+                                    <i class="bi bi-tag-fill me-1"></i>{school.typ}
+                                </span>
+                                {internat_badge}
+                                {stypendium_badge}
+                            </div>
+                            {specjalnosci_html}
+                        </div>
                     </div>
-                    <div class="text-end">
-                        <small class="text-muted">{school.odleglosc} km</small>
+
+                    <div class="text-md-end text-start mt-3 mt-md-0 ps-md-4" style="min-width: 120px;">
+                        <div class="text-muted small mb-1"><i class="bi bi-geo-alt-fill me-1"></i>Odległość</div>
+                        <div class="fs-4 fw-bold text-primary">{school.odleglosc} <span class="fs-6 text-muted fw-normal">km</span></div>
                     </div>
+
                 </div>
-            </li>'''
+            </div>'''
     else:
-        result_html = '<li class="list-group-item text-muted">Brak szkół spełniających kryteria.</li>'
+        result_html = '''
+        <div class="alert alert-info text-center border-0 shadow-sm p-4 rounded-3 w-100">
+            <i class="bi bi-search fs-3 d-block mb-2"></i>
+            Brak szkół spełniających podane kryteria.
+        </div>'''
 
     return jsonify({'html': result_html})
 

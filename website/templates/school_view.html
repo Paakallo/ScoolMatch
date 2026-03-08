@@ -42,7 +42,7 @@
     <div id="schoolsList" class="d-flex flex-column gap-3">
         {% if schools %}
             {% for school in schools %}
-            <div class="card school-card shadow-sm border-0">
+            <div class="card school-card shadow-sm border-0 mb-3">
                 <div class="card-body p-4 d-flex flex-column flex-md-row justify-content-between align-items-md-center">
 
                     <div class="d-flex align-items-start mb-3 mb-md-0">
@@ -97,3 +97,145 @@
     </div>
 
 </div>
+
+<div class="modal fade" id="filterModal" tabindex="-1" aria-labelledby="filterModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content border-0 shadow">
+            <div class="modal-header bg-light">
+                <h5 class="modal-title fw-bold" id="filterModalLabel"><i class="bi bi-funnel-fill text-primary me-2"></i>Filtruj szkoły</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="filterForm">
+                    <div class="mb-3">
+                        <label for="typeFilter" class="form-label text-muted small fw-bold">RODZAJ SZKOŁY</label>
+                        <select class="form-select" id="typeFilter" name="type">
+                            <option value="">Wszystkie</option>
+                            <option value="Liceum">Liceum</option>
+                            <option value="Technikum">Technikum</option>
+                            <option value="Szkoła zawodowa">Szkoła zawodowa</option>
+                        </select>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-6">
+                            <label for="dormitoryFilter" class="form-label text-muted small fw-bold">INTERNAT</label>
+                            <select class="form-select" id="dormitoryFilter" name="dormitory">
+                                <option value="">Wszystko</option>
+                                <option value="Tak">Tak</option>
+                                <option value="Nie">Nie</option>
+                            </select>
+                        </div>
+                        <div class="col-6">
+                            <label for="scholarshipFilter" class="form-label text-muted small fw-bold">STYPENDIUM</label>
+                            <select class="form-select" id="scholarshipFilter" name="scholarship">
+                                <option value="">Wszystko</option>
+                                <option value="Tak">Wymagane</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label text-muted small fw-bold">SPECJALNOŚCI</label>
+                        <button type="button" class="btn btn-outline-primary w-100" id="specialtyButton" onclick="toggleSpecialties()">
+                            <i class="bi bi-list-check me-1"></i> Wybierz specjalności
+                        </button>
+                        <div id="specialtyList" class="mt-2 p-2 border rounded bg-light" style="display: none; max-height: 200px; overflow-y: auto;">
+                        </div>
+                    </div>
+
+                    <div class="mb-2">
+                        <label for="distanceFilter" class="form-label text-muted small fw-bold">MAKSYMALNA ODLEGŁOŚĆ: <span id="distanceValue" class="text-primary fs-5">10</span> km</label>
+                        <input type="range" class="form-range" id="distanceFilter" name="distance" min="0" max="50" value="10" step="1" oninput="updateDistanceValue(this.value)">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer bg-light border-top-0">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Anuluj</button>
+                <button type="button" class="btn btn-primary px-4" onclick="applyFilters()">Zastosuj filtry</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function updateDistanceValue(value) {
+        document.getElementById('distanceValue').textContent = value;
+    }
+
+    function applyFilters() {
+        const formElement = document.getElementById('filterForm');
+
+        // Zbieramy zaznaczone specjalności
+        const selectedSpecialties = [];
+        const specialtyCheckboxes = document.querySelectorAll('#specialtyList input[type="checkbox"]:checked');
+        specialtyCheckboxes.forEach(checkbox => {
+            selectedSpecialties.push(checkbox.value);
+        });
+
+        const formData = {
+            type: document.getElementById('typeFilter').value,
+            specialties: selectedSpecialties,
+            dormitory: document.getElementById('dormitoryFilter').value,
+            scholarship: document.getElementById('scholarshipFilter').value,
+            distance: document.getElementById('distanceFilter').value
+        };
+
+        // Wysyłamy AJAX request do backendu
+        fetch('/filter-schools', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(formData)
+        })
+        .then(response => response.json())
+        .then(data => {
+            // Aktualizujemy listę szkół na stronie
+            document.getElementById('schoolsList').innerHTML = data.html;
+            // Zamykamy modal
+            const modal = bootstrap.Modal.getInstance(document.getElementById('filterModal'));
+            if (modal) modal.hide();
+        })
+        .catch(error => {
+            console.error('Błąd:', error);
+            alert('Błąd podczas filtrowania. Spróbuj ponownie.');
+        });
+    }
+
+    function toggleSpecialties() {
+        const specialtyList = document.getElementById('specialtyList');
+        specialtyList.style.display = specialtyList.style.display === 'none' || specialtyList.style.display === '' ? 'block' : 'none';
+
+        // Jeśli lista specjalności ma być widoczna, załaduj specjalności z serwera
+        if (specialtyList.style.display === 'block') {
+            fetch('/get-specialties')
+                .then(response => response.json())
+                .then(data => {
+                    specialtyList.innerHTML = '';
+                    data.specialties.forEach(specialty => {
+                        const div = document.createElement('div');
+                        div.className = 'form-check mb-1';
+                        div.innerHTML = `
+                            <input class="form-check-input" type="checkbox" value="${specialty}" id="specialty_${specialty}">
+                            <label class="form-check-label" for="specialty_${specialty}">
+                                ${specialty}
+                            </label>
+                        `;
+                        specialtyList.appendChild(div);
+                    });
+                })
+                .catch(error => {
+                    console.error('Błąd podczas ładowania specjalności:', error);
+                });
+        }
+    }
+
+    // Przyciśnięcie Enter w modalnym formularzu również zastosuje filtry
+    document.getElementById('filterForm').addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            applyFilters();
+        }
+    });
+</script>
