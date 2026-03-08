@@ -60,7 +60,18 @@ def home():
     # Dodajemy przykładowe dane, jeśli baza jest pusta
     if School.query.count() == 0:
         example_schools = [
-            School(nazwa='I Liceum Ogólnokształcące im. Adama Mickiewicza', lokalizacja='Śródmieście', specjalnosci='Matematyka, Fizyka, Historia', typ='Liceum', internat=True, odleglosc=2.5, stypendium=True),
+            School(
+                nazwa='I Liceum Ogólnokształcące im. Adama Mickiewicza',
+                lokalizacja='Śródmieście',
+                specjalnosci='Matematyka, Fizyka, Historia',
+                typ='Liceum',
+                internat=True,
+                odleglosc=2.5,
+                stypendium=True,
+                zdjecie='/static/szkola_mickiewicza.webp',
+                opis='Jedno z najstarszych i najlepszych liceów w Gdańsku. Szkoła w Gdańsku oferuje profile z rozszerzoną matematyką, fizyką i historią, łącząc wysoki poziom nauczania z możliwością rozwijania pasji. Uczniowie mogą uczestniczyć w licznych kołach naukowych i artystycznych, a także korzystać z nowoczesnej infrastruktury sportowej. Patron szkoły – Adam Mickiewicz – symbolizuje rozwój intelektualny, kreatywność i otwartość na wiedzę, wartości, które placówka stara się przekazywać swoim uczniom.',
+                strona_www='https://lo1.olsztyn.eu/'
+            ),
             School(nazwa='II Liceum Ogólnokształcące im. Króla Stanisława Leszczyńskiego', lokalizacja='Wrzeszcz', specjalnosci='Języki obce, Literatura', typ='Liceum', internat=False, odleglosc=4.2, stypendium=False),
             School(nazwa='III Liceum Ogólnokształcące', lokalizacja='Oliwa', specjalnosci='Biologia, Chemia', typ='Liceum', internat=False, odleglosc=8.5, stypendium=True),
             School(nazwa='Technikum Elektroniczne im. Józefa Marii Fitelberga', lokalizacja='Śródmieście', specjalnosci='Elektronika, Robotyka', typ='Technikum', internat=True, odleglosc=2.8, stypendium=True),
@@ -119,7 +130,6 @@ def home():
 
     return render_template('index.html')
 
-# Kiedy JS robi fetch('QA.html'), Flask przechwytuje to tutaj
 @app.route('/<module_name>')
 def serve_module(module_name):
     # Sprawdzamy, czy plik kończy się na .html, żeby było bezpieczniej
