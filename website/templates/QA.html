@@ -100,13 +100,11 @@
         const totalPages = Math.ceil(questions.length / questionsPerPage);
         let currentPage = 1;
 
-        // Generujemy wszystkie pytania, dodajemy atrybut data-page
         questions.forEach((q, index) => {
             const i = index + 1;
             const category = categories[index % 6];
             const pageNum = Math.ceil(i / questionsPerPage);
 
-            // Klasa 'd-none' domyślnie dodana do pytań z innych stron niż pierwsza
             const visibilityClass = (pageNum === 1) ? '' : 'd-none';
 
             htmlContent += `
@@ -129,7 +127,6 @@
 
         if(container) { container.innerHTML = htmlContent; }
 
-        // --- Logika Paginacji ---
         const prevBtn = document.getElementById('prev-btn');
         const nextBtn = document.getElementById('next-btn');
         const submitBtnContainer = document.getElementById('submit-btn-container');
@@ -137,7 +134,6 @@
         const pageIndicator = document.getElementById('page-indicator');
 
         function renderPage(page) {
-            // Ukrywa wszystkie pytania i pokazuje tylko te z bieżącej strony
             document.querySelectorAll('.question-item').forEach(item => {
                 if (parseInt(item.getAttribute('data-page')) === page) {
                     item.classList.remove('d-none');
@@ -146,21 +142,17 @@
                 }
             });
 
-            // Aktualizacja przycisków
             prevBtn.disabled = (page === 1);
             pageIndicator.innerText = `Strona ${page} z ${totalPages}`;
 
             if (page === totalPages) {
-                // Ukrywamy przycisk "Dalej", pokazujemy zielony "Zakończ test"
                 nextBtn.classList.add('d-none');
                 submitBtnContainer.classList.remove('d-none');
             } else {
-                // Pokazujemy "Dalej", ukrywamy "Zakończ test"
                 nextBtn.classList.remove('d-none');
                 submitBtnContainer.classList.add('d-none');
             }
 
-            // Płynne przeskoczenie na górę po zmianie strony
             document.getElementById('questions-top').scrollIntoView({ behavior: 'smooth' });
         }
 
@@ -178,7 +170,6 @@
             }
         });
 
-        // --- Pasek postępu (Działa na wszystkich 90 pytaniach mimo podziału stron) ---
         const allRadioButtons = document.querySelectorAll('.answer-btn');
         const progressBar = document.getElementById('progress-bar');
         const progressText = document.getElementById('progress-text');
@@ -195,7 +186,6 @@
             });
         });
 
-        // --- Wysłanie danych do serwera Flask ---
         const form = document.getElementById('holland-form');
         form.addEventListener('submit', async (e) => {
             e.preventDefault(); 
@@ -234,7 +224,6 @@
                 document.getElementById('res-work').innerText = result.details.praca;
                 document.getElementById('res-jobs').innerText = result.details.zawody;
 
-                // Przewinięcie na samą górę do wyników
                 window.scrollTo(0, 0);
 
             } catch (error) {

@@ -9,16 +9,15 @@ class School(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     nazwa = db.Column(db.String(255), nullable=False)
     lokalizacja = db.Column(db.String(255), nullable=False)
-    specjalnosci = db.Column(db.String(500), nullable=True)  # np. "Informatyka, Elektronika"
-    typ = db.Column(db.String(100), nullable=True)  # Liceum, Technikum, Szkoła zawodowa
-    internat = db.Column(db.Boolean, default=False)  # Czy szkoła ma internat
-    odleglosc = db.Column(db.Float, nullable=True)  # Odległość od centrum Gdańska (km)
-    stypendium = db.Column(db.Boolean, default=False) # NOWE POLE: Czy szkoła oferuje stypendium?
-    zdjecie = db.Column(db.String(255), nullable=True)  # Ścieżka do zdjęcia szkoły
-    opis = db.Column(db.Text, nullable=True)  # Opis szkoły
-    strona_www = db.Column(db.String(255), nullable=True)  # Link do strony WWW szkoły
+    specjalnosci = db.Column(db.String(500), nullable=True)  
+    typ = db.Column(db.String(100), nullable=True)  
+    internat = db.Column(db.Boolean, default=False) 
+    odleglosc = db.Column(db.Float, nullable=True)  
+    stypendium = db.Column(db.Boolean, default=False) 
+    zdjecie = db.Column(db.String(255), nullable=True)
+    opis = db.Column(db.Text, nullable=True)  
+    strona_www = db.Column(db.String(255), nullable=True)  
 
-    # Relacje
     open_days = db.relationship('OpenDay', backref='school', lazy=True)
 
     def __repr__(self):
@@ -43,12 +42,12 @@ class Wydarzenie(db.Model):
     __tablename__ = 'wydarzenie'
 
     id = db.Column(db.Integer, primary_key=True)
-    typ = db.Column(db.String(100), nullable=False)  # np. "Konferencja", "Warsztaty"
+    typ = db.Column(db.String(100), nullable=False)  
     nazwa_wydarzenia = db.Column(db.String(255), nullable=False)
     data = db.Column(db.DateTime, nullable=False)
-    szkola = db.Column(db.String(255), nullable=True)  # Dodane: nazwa szkoły / miejsca
-    odleglosc = db.Column(db.Float, nullable=True)     # Dodane: dystans w km
-    opis = db.Column(db.Text, nullable=True)           # NOWE POLE: Opis wydarzenia
+    szkola = db.Column(db.String(255), nullable=True)  
+    odleglosc = db.Column(db.Float, nullable=True)     
+    opis = db.Column(db.Text, nullable=True)           
 
     def __repr__(self):
         return f'<Wydarzenie {self.nazwa_wydarzenia}>'

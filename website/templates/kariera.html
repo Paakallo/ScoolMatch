@@ -34,25 +34,20 @@
 
         .carousel-item video {
         width: 100%;
-        /* Zmieniamy height z 315px na auto, aby wideo samo dobrało wysokość */
         height: auto;
-        /* Opcjonalnie: ograniczamy maksymalną wysokość, aby nie rozwaliło strony na desktopie */
         max-height: 400px;
         border-radius: 10px;
-        background-color: #000; /* Czarne tło dla estetyki */
+        background-color: #000; 
 
-        /* KLUCZOWE: Cały film ma się zmieścić bez przycinania */
         object-fit: contain;
         }
 
         .grid-view video {
         width: 100%;
-        /* W siatce chcemy zachować równe karty, więc zostawiamy 200px */
         height: 200px;
         border-radius: 10px;
         background-color: #000;
 
-        /* KLUCZOWE: Film przeskaluje się wewnątrz tych 200px, nie ucina góry/dołu */
         object-fit: contain;
         }
 
@@ -66,7 +61,6 @@
         .carousel-inner {
             position: relative;
         }
-        /* Dodajemy bezpieczną strefę dla wideo */
         .carousel-item video, .carousel-item iframe {
             pointer-events: auto !important;
             z-index: 2;
@@ -108,7 +102,6 @@
         .section-content {
             position: relative;
         }
-        /* Dostosowanie karuzeli - strzałki poza wideo */
         .carousel {
             position: relative;
         }
@@ -455,13 +448,11 @@
             const icon = button.querySelector('i');
 
             if (carousel.classList.contains('d-none')) {
-                // Przełącz na karuzelę
                 carousel.classList.remove('d-none');
                 grid.classList.add('d-none');
                 icon.className = 'bi bi-grid';
                 button.title = 'Przełącz na widok siatki';
             } else {
-                // Przełącz na siatkę
                 carousel.classList.add('d-none');
                 grid.classList.remove('d-none');
                 icon.className = 'bi bi-list';
@@ -469,7 +460,6 @@
             }
         }
 
-        // Dodaj event listenery
         const btnAbsolwenci = document.getElementById('toggle-absolwenci');
         if(btnAbsolwenci) btnAbsolwenci.addEventListener('click', () => toggleView('absolwenci'));
 
@@ -479,13 +469,9 @@
         const btnSzkola = document.getElementById('toggle-szkola');
         if(btnSzkola) btnSzkola.addEventListener('click', () => toggleView('szkola'));
 
-        // Obsługa klawiatury - umożliwia przełączanie filmów klawiszami strzałek
         document.addEventListener('keydown', function(event) {
-            // Znajdź wszystkie aktywne i widoczne karuzele na stronie
             const visibleCarousels = Array.from(document.querySelectorAll('.carousel-view:not(.d-none) .carousel'));
 
-            // Jeśli jest widoczna przynajmniej jedna karuzela, zastosuj nawigację do pierwszej od góry
-            // (Możesz to zmodyfikować, jeśli chcesz przewijać wszystkie naraz)
             if (visibleCarousels.length > 0) {
                 const targetCarousel = visibleCarousels[0];
 
