@@ -1,93 +1,197 @@
-<style>
-    /* Usunąłem styl body, ponieważ dziedziczymy go z index.html */
-    .section-card {
-        transition: all 0.2s ease-in-out;
-        border-left: 5px solid #0d6efd;
-        background-color: #ffffff;
-        border-radius: 10px;
-        box-shadow: 0 .125rem .25rem rgba(0,0,0,.075);
-    }
-    .section-card:hover {
-        transform: translateX(5px);
-        box-shadow: 0 .5rem 1rem rgba(0,0,0,.15)!important;
-    }
-    .section-title {
-        color: #0d6efd;
-        margin-bottom: 2rem;
-        font-weight: bold;
-    }
-    .carousel-item iframe, .carousel-item video {
-        width: 100%;
-        height: 315px;
-        border: none;
-        border-radius: 10px;
-        background-color: #000;
-    }
-    .carousel-control-prev, .carousel-control-next {
-        width: 5%;
-    }
-    .carousel-caption {
-        background-color: rgba(13, 110, 253, 0.8);
-        border-radius: 10px;
-    }
-    .grid-view iframe, .grid-view video {
-        width: 100%;
-        height: 200px;
-        border: none;
-        border-radius: 10px;
-        background-color: #000;
-    }
-    .grid-view .card {
-        margin-bottom: 1rem;
-    }
-    .view-toggle {
-        position: absolute;
-        top: 1rem;
-        left: 1rem;
-        z-index: 10;
-        background-color: rgba(255, 255, 255, 0.8);
-        border: none;
-        border-radius: 50%;
-        width: 40px;
-        height: 40px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        cursor: pointer;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    }
-    .view-toggle:hover {
-        background-color: rgba(255, 255, 255, 1);
-    }
-    .section-content {
-        position: relative;
-    }
-</style>
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zasmakuj Kariery</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+        .section-card {
+            transition: all 0.2s ease-in-out;
+            border-left: 5px solid #0d6efd;
+            background-color: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 .125rem .25rem rgba(0,0,0,.075);
+        }
+        .section-card:hover {
+            transform: translateX(5px);
+            box-shadow: 0 .5rem 1rem rgba(0,0,0,.15)!important;
+        }
+        .section-title {
+            color: #0d6efd;
+            margin-bottom: 2rem;
+            font-weight: bold;
+        }
+        .carousel-item iframe {
+            width: 100%;
+            height: 315px;
+            border: none;
+            border-radius: 10px;
+        }
+        .carousel-item video {
+            width: 100%;
+            height: 315px;
+            border: none;
+            border-radius: 10px;
+            object-fit: cover;
+        }
+        .grid-view video {
+            width: 100%;
+            height: 200px;
+            border: none;
+            border-radius: 10px;
+            object-fit: cover;
+        }
+        .carousel-control-prev, .carousel-control-next {
+            width: 5%;
+            z-index: 1;
+        }
+        .carousel-control-prev:disabled, .carousel-control-next:disabled {
+            opacity: 0.3;
+        }
+        .carousel-inner {
+            position: relative;
+        }
+        /* Dodajemy bezpieczną strefę dla wideo */
+        .carousel-item video, .carousel-item iframe {
+            pointer-events: auto !important;
+            z-index: 2;
+        }
+        .carousel-caption {
+            background-color: rgba(13, 110, 253, 0.8);
+            border-radius: 10px;
+        }
+        .grid-view iframe {
+            width: 100%;
+            height: 200px;
+            border: none;
+            border-radius: 10px;
+        }
+        .grid-view .card {
+            margin-bottom: 1rem;
+        }
+        .view-toggle {
+            position: absolute;
+            top: 1rem;
+            left: 1rem;
+            z-index: 10;
+            background-color: rgba(255, 255, 255, 0.8);
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .view-toggle:hover {
+            background-color: rgba(255, 255, 255, 1);
+        }
+        .section-content {
+            position: relative;
+        }
+        /* Dostosowanie karuzeli - strzałki poza wideo */
+        .carousel {
+            position: relative;
+        }
+        .carousel-control-prev, .carousel-control-next {
+            background-color: rgba(13, 110, 253, 0.2);
+            border-radius: 50%;
+            width: auto;
+            height: auto;
+            padding: 10px 12px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+        .carousel-control-prev {
+            left: -60px;
+        }
+        .carousel-control-next {
+            right: -60px;
+        }
+        .carousel-control-prev:hover, .carousel-control-next:hover {
+            background-color: rgba(13, 110, 253, 0.4);
+        }
+    </style>
+</head>
+<body>
+    <div class="container py-3" style="max-width: 900px;">
+        <div class="text-center mb-4">
+            <h1 class="display-5 fw-bold text-primary"><i class="bi bi-briefcase"></i> Zasmakuj Kariery</h1>
+            <p class="lead text-muted">Odkryj ścieżki kariery przez filmy absolwentów i relacje z zawodów.</p>
+        </div>
 
-<div class="container py-3" style="max-width: 900px;">
-    <div class="text-center mb-4">
-        <h1 class="display-5 fw-bold text-primary"><i class="bi bi-briefcase"></i> Zasmakuj Kariery</h1>
-        <p class="lead text-muted">Odkryj ścieżki kariery przez filmy absolwentów i relacje z zawodów.</p>
-    </div>
-
-    <div class="section-card mb-4 p-4">
-        <h2 class="section-title"><i class="bi bi-film me-2"></i> Filmy naszych absolwentów</h2>
-        <div class="section-content">
-            <button class="view-toggle" id="toggle-absolwenci" title="Przełącz na widok siatki">
-                <i class="bi bi-grid"></i>
-            </button>
-            <div id="absolwenci-carousel" class="carousel-view">
-                <div id="absolwenciCarousel" class="carousel slide" data-bs-ride="carousel">
-                    <div class="carousel-inner">
-                        <div class="carousel-item active">
-                            <video controls>
-                                <source src="/static/output.mov" type="video/quicktime">
-                                <source src="/static/wideo_chrome.mp4" type="video/mp4">
-                                Twoja przeglądarka nie obsługuje odtwarzacza wideo.
-                            </video>
-                            <div class="carousel-caption d-none d-md-block">
-                                <h5>Film naszego absolwenta</h5>
-                                <p>Poznaj historię sukcesu w branży IT.</p>
+        <!-- Sekcja: Filmy naszych absolwentów -->
+        <div class="section-card mb-4 p-4">
+            <h2 class="section-title"><i class="bi bi-film me-2"></i> Filmy naszych absolwentów</h2>
+            <div class="section-content">
+                <button class="view-toggle" id="toggle-absolwenci" title="Przełącz na widok siatki">
+                    <i class="bi bi-grid"></i>
+                </button>
+                <div id="absolwenci-carousel" class="carousel-view">
+                    <div id="absolwenciCarousel" class="carousel slide" data-bs-ride="carousel">
+                        <div class="carousel-inner">
+                            <div class="carousel-item active">
+                                <video controls style="background-color: #000;">
+                                    <source src="/static/output.mp4" type="video/mp4">
+                                    Twoja przeglądarka nie obsługuje odtwarzania wideo.
+                                </video>
+                                <div class="carousel-caption d-none d-md-block">
+                                    <h5>Film absolwenta 1</h5>
+                                    <p>Film z doświadczeniami naszego absolwenta.</p>
+                                </div>
+                            </div>
+                            <div class="carousel-item">
+                                <iframe src="https://www.youtube.com/embed/dQw4w9WgXcQ" allowfullscreen></iframe>
+                                <div class="carousel-caption d-none d-md-block">
+                                    <h5>Film absolwenta 2</h5>
+                                    <p>Opis filmu absolwenta.</p>
+                                </div>
+                            </div>
+                            <div class="carousel-item">
+                                <iframe src="https://www.youtube.com/embed/dQw4w9WgXcQ" allowfullscreen></iframe>
+                                <div class="carousel-caption d-none d-md-block">
+                                    <h5>Film absolwenta 3</h5>
+                                    <p>Opis filmu absolwenta.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <button class="carousel-control-prev" type="button" data-bs-target="#absolwenciCarousel" data-bs-slide="prev">
+                            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                            <span class="visually-hidden">Previous</span>
+                        </button>
+                        <button class="carousel-control-next" type="button" data-bs-target="#absolwenciCarousel" data-bs-slide="next">
+                            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                            <span class="visually-hidden">Next</span>
+                        </button>
+                    </div>
+                </div>
+                <div id="absolwenci-grid" class="grid-view d-none">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="card">
+                                <video controls style="background-color: #000;">
+                                    <source src="/static/output.mp4" type="video/mp4">
+                                    Twoja przeglądarka nie obsługuje odtwarzania wideo.
+                                </video>
+                                <div class="card-body">
+                                    <h6 class="card-title">Film absolwenta 1</h6>
+                                    <p class="card-text small">Film z doświadczeniami naszego absolwenta.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card">
+                                <iframe src="https://www.youtube.com/embed/dQw4w9WgXcQ" allowfullscreen></iframe>
+                                <div class="card-body">
+                                    <h6 class="card-title">Film absolwenta 2</h6>
+                                    <p class="card-text small">Opis filmu absolwenta.</p>
+                                </div>
                             </div>
                         </div>
                         <div class="carousel-item">
@@ -280,15 +384,37 @@
             }
         }
 
-        // Dodaj event listenery tylko jeśli elementy istnieją
-        const toggleAbsolwenciBtn = document.getElementById('toggle-absolwenci');
-        const toggleZawodBtn = document.getElementById('toggle-zawod');
+        // Dodaj event listenery
+        document.getElementById('toggle-absolwenci').addEventListener('click', () => toggleView('absolwenci'));
+        document.getElementById('toggle-zawod').addEventListener('click', () => toggleView('zawod'));
 
-        if (toggleAbsolwenciBtn) {
-            toggleAbsolwenciBtn.addEventListener('click', () => toggleView('absolwenci'));
-        }
-        if (toggleZawodBtn) {
-            toggleZawodBtn.addEventListener('click', () => toggleView('zawod'));
-        }
-    })();
-</script>
+        // Obsługa klawiatury - umożliwia przełączanie filmów klawiszami strzałek
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'ArrowLeft') {
+                // Sprawdzamy, czy karuzela absolwentów jest widoczna
+                const absolwenciCarousel = document.getElementById('absolwenciCarousel');
+                const zawodCarousel = document.getElementById('zawodCarousel');
+
+                if (absolwenciCarousel && !absolwenciCarousel.closest('#absolwenci-carousel').classList.contains('d-none')) {
+                    const prevBtn = absolwenciCarousel.querySelector('.carousel-control-prev');
+                    if (prevBtn) prevBtn.click();
+                } else if (zawodCarousel && !zawodCarousel.closest('#zawod-carousel').classList.contains('d-none')) {
+                    const prevBtn = zawodCarousel.querySelector('.carousel-control-prev');
+                    if (prevBtn) prevBtn.click();
+                }
+            } else if (event.key === 'ArrowRight') {
+                const absolwenciCarousel = document.getElementById('absolwenciCarousel');
+                const zawodCarousel = document.getElementById('zawodCarousel');
+
+                if (absolwenciCarousel && !absolwenciCarousel.closest('#absolwenci-carousel').classList.contains('d-none')) {
+                    const nextBtn = absolwenciCarousel.querySelector('.carousel-control-next');
+                    if (nextBtn) nextBtn.click();
+                } else if (zawodCarousel && !zawodCarousel.closest('#zawod-carousel').classList.contains('d-none')) {
+                    const nextBtn = zawodCarousel.querySelector('.carousel-control-next');
+                    if (nextBtn) nextBtn.click();
+                }
+            }
+        });
+    </script>
+</body>
+</html>
