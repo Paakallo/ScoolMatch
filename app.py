@@ -253,12 +253,12 @@ def filter_schools():
             stypendium_badge = '<span class="badge bg-info text-dark ms-1"><i class="bi bi-cash-coin"></i> Oferuje stypendium</span>' if school.stypendium else ''
             
             specjalnosci_html = f'<div class="small text-muted mt-2"><strong>Specjalności:</strong> {school.specjalnosci}</div>'
-            result_html += f'''<li class="list-group-item">
+            result_html += f'''<div class="school-item p-3">
                 <div class="d-flex justify-content-between align-items-start">
                     <div>
-                        <strong>{school.nazwa}</strong>
+                        <strong class="text-primary">{school.nazwa}</strong>
                         <div class="small text-muted mt-1">
-                            <span class="badge bg-secondary">{school.typ}</span>
+                            <span class="badge bg-primary">{school.typ}</span>
                             {internat_badge}
                             {stypendium_badge}
                         </div>
@@ -268,9 +268,9 @@ def filter_schools():
                         <small class="text-muted">{school.odleglosc} km</small>
                     </div>
                 </div>
-            </li>'''
+            </div>'''
     else:
-        result_html = '<li class="list-group-item text-muted">Brak szkół spełniających kryteria.</li>'
+        result_html = '<div class="school-item p-3 text-muted">Brak szkół spełniających kryteria.</div>'
 
     return jsonify({'html': result_html})
 
