@@ -171,6 +171,11 @@
                 reader.onload = function(e) {
                     avatarImage.src = e.target.result;
                     localStorage.setItem('sm_avatar', e.target.result);
+
+                    // Wywołaj funkcję z index.html, aby odświeżyć miniaturkę w menu
+                    if (typeof window.updateSidebarAvatar === 'function') {
+                        window.updateSidebarAvatar();
+                    }
                 }
                 reader.readAsDataURL(file);
             }

@@ -52,10 +52,11 @@
         <div id="sidebar-wrapper">
             <div class="sidebar-heading d-flex justify-content-between align-items-center p-3 border-bottom">
                 <a href="#" class="d-flex align-items-center text-decoration-none text-dark module-link" data-module="profile.html">
-                    <i class="bi bi-person-circle fs-2 text-primary hover-zoom"></i>
+                    <i class="bi bi-person-circle fs-2 text-primary hover-zoom" id="sidebar-avatar-icon"></i>
+                    <img id="sidebar-avatar-img" src="" alt="Avatar" class="rounded-circle d-none shadow-sm hover-zoom" style="width: 35px; height: 35px; object-fit: cover; border: 2px solid #0d6efd;">
                     <span class="ms-2 fw-bold">Twój Profil</span>
                 </a>
-                </div>
+            </div>
 
 
             <div class="list-group list-group-flush mt-3">
@@ -168,6 +169,29 @@
 
         window.addEventListener('DOMContentLoaded', () => {
             // Upewnij się, że nazwałeś plik z powitaniem "home.html"
+            loadModule('home.html');
+        });
+
+        // --- FUNKCJA DO AKTUALIZACJI ZDJĘCIA W MENU ---
+        window.updateSidebarAvatar = function() {
+            const avatarData = localStorage.getItem('sm_avatar');
+            const icon = document.getElementById('sidebar-avatar-icon');
+            const img = document.getElementById('sidebar-avatar-img');
+
+            if (avatarData && img && icon) {
+                // Jeśli jest zdjęcie, pokaż img i ukryj ikonę
+                img.src = avatarData;
+                img.classList.remove('d-none');
+                icon.classList.add('d-none');
+            } else if (img && icon) {
+                // Jeśli nie ma zdjęcia, pokaż ikonę i ukryj img
+                img.classList.add('d-none');
+                icon.classList.remove('d-none');
+            }
+        };
+
+        window.addEventListener('DOMContentLoaded', () => {
+            updateSidebarAvatar(); // Wywołaj przy starcie, by załadować zapisane zdjęcie
             loadModule('home.html');
         });
 
