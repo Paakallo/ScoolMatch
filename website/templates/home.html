@@ -1,0 +1,149 @@
+<style>
+    .path-card {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        border-radius: 15px;
+        height: 100%;
+    }
+    .path-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 1rem 3rem rgba(0,0,0,.175)!important;
+    }
+    .path-icon {
+        width: 70px;
+        height: 70px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 20px;
+        font-size: 2rem;
+        margin-bottom: 20px;
+    }
+    .pro-con-list {
+        list-style-type: none;
+        padding-left: 0;
+        margin-bottom: 0;
+    }
+    .pro-con-list li {
+        margin-bottom: 8px;
+        display: flex;
+        align-items: flex-start;
+    }
+    .pro-con-list i {
+        margin-top: 4px;
+        margin-right: 10px;
+    }
+</style>
+
+<div class="container py-4 pb-5">
+
+    <div class="text-center mb-5 mt-3">
+        <h1 class="display-4 fw-bold text-primary">Witaj w ScoolMatch! 👋</h1>
+        <p class="lead fw-semibold">Projekt wspierany przez fundację "Dom na Skraju" &lt;3</p>
+        <p class="fs-5 text-muted mt-3 mx-auto" style="max-width: 700px;">
+            Przed Tobą jeden z najważniejszych wyborów – co po 8 klasie? Spokojnie, nie musisz decydować w ciemno. Jesteśmy tu po to, by pomóc Ci odkryć Twoje mocne strony i dopasować je do odpowiedniej ścieżki. Zobacz, jakie masz możliwości.
+        </p>
+    </div>
+
+    <div class="row g-4">
+
+        <div class="col-lg-4">
+            <div class="card border-0 shadow-sm path-card p-3">
+                <div class="card-body">
+                    <div class="text-center">
+                        <div class="path-icon bg-primary bg-opacity-10 text-primary">
+                            <i class="bi bi-book-half"></i>
+                        </div>
+                        <h3 class="fw-bold mb-3">Liceum (LO)</h3>
+                        <p class="text-muted small">Liceum Ogólnokształcące (4 lata)</p>
+                    </div>
+                    <p class="mb-4">
+                        Skupia się na wiedzy ogólnej i teoretycznej. Wybierasz tzw. "profil" (np. mat-fiz, biol-chem), na którym realizujesz przedmioty w zakresie rozszerzonym. To szkoła stworzona głównie po to, by świetnie zdać maturę i pójść na studia.
+                    </p>
+
+                    <h6 class="fw-bold text-success"><i class="bi bi-plus-circle me-1"></i> Plusy</h6>
+                    <ul class="pro-con-list small mb-3">
+                        <li><i class="bi bi-check text-success fs-5"></i> Daje więcej czasu (4 lata) na przemyślenie swojej docelowej ścieżki zawodowej.</li>
+                        <li><i class="bi bi-check text-success fs-5"></i> Najlepiej przygotowuje do egzaminu maturalnego i wymagających studiów.</li>
+                        <li><i class="bi bi-check text-success fs-5"></i> Szeroki rozwój ogólny.</li>
+                    </ul>
+
+                    <h6 class="fw-bold text-danger mt-4"><i class="bi bi-dash-circle me-1"></i> Minusy</h6>
+                    <ul class="pro-con-list small">
+                        <li><i class="bi bi-x text-danger fs-5"></i> Po ukończeniu szkoły nie masz żadnego konkretnego zawodu ani kwalifikacji.</li>
+                        <li><i class="bi bi-x text-danger fs-5"></i> Dużo teorii, bardzo mało zajęć praktycznych.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="card border-0 shadow-sm path-card p-3">
+                <div class="card-body">
+                    <div class="text-center">
+                        <div class="path-icon bg-success bg-opacity-10 text-success">
+                            <i class="bi bi-laptop"></i>
+                        </div>
+                        <h3 class="fw-bold mb-3">Technikum</h3>
+                        <p class="text-muted small">Technikum zawodowe (5 lat)</p>
+                    </div>
+                    <p class="mb-4">
+                        Łączy wiedzę ogólną z nauką konkretnego zawodu (np. technik informatyk, fotograf, logistyk). Uczysz się przedmiotów ogólnych (jak w liceum) i zdajesz maturę, ale dodatkowo masz przedmioty zawodowe, praktyki i zdajesz egzaminy potwierdzające kwalifikacje.
+                    </p>
+
+                    <h6 class="fw-bold text-success"><i class="bi bi-plus-circle me-1"></i> Plusy</h6>
+                    <ul class="pro-con-list small mb-3">
+                        <li><i class="bi bi-check text-success fs-5"></i> Zdobywasz konkretny, poszukiwany na rynku pracy tytuł technika.</li>
+                        <li><i class="bi bi-check text-success fs-5"></i> Masz otwartą drogę na studia – możesz zdawać maturę jak w liceum.</li>
+                        <li><i class="bi bi-check text-success fs-5"></i> Posiadasz darmowe, obowiązkowe praktyki zawodowe (często u pracodawców).</li>
+                    </ul>
+
+                    <h6 class="fw-bold text-danger mt-4"><i class="bi bi-dash-circle me-1"></i> Minusy</h6>
+                    <ul class="pro-con-list small">
+                        <li><i class="bi bi-x text-danger fs-5"></i> Nauka trwa najdłużej (aż 5 lat).</li>
+                        <li><i class="bi bi-x text-danger fs-5"></i> Duże obciążenie nauką – musisz opanować i materiał do matury, i trudne przedmioty zawodowe.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="card border-0 shadow-sm path-card p-3">
+                <div class="card-body">
+                    <div class="text-center">
+                        <div class="path-icon bg-warning bg-opacity-10 text-warning">
+                            <i class="bi bi-tools"></i>
+                        </div>
+                        <h3 class="fw-bold mb-3">Szkoła Branżowa</h3>
+                        <p class="text-muted small">Szkoła branżowa I stopnia (3 lata)</p>
+                    </div>
+                    <p class="mb-4">
+                        Dawniej nazywana "zawodówką". Skupia się niemal w 100% na praktyce. Wybierasz bardzo konkretny zawód (np. fryzjer, mechanik samochodowy, kucharz). Szybko kończysz szkołę, robisz kwalifikacje i jesteś gotowy, by zarabiać własne pieniądze.
+                    </p>
+
+                    <h6 class="fw-bold text-success"><i class="bi bi-plus-circle me-1"></i> Plusy</h6>
+                    <ul class="pro-con-list small mb-3">
+                        <li><i class="bi bi-check text-success fs-5"></i> Najkrótszy czas nauki (tylko 3 lata) i najszybsze wejście na rynek pracy.</li>
+                        <li><i class="bi bi-check text-success fs-5"></i> Ogromna ilość zajęć praktycznych (często jesteś zatrudniony jako młodociany pracownik i dostajesz pensję).</li>
+                        <li><i class="bi bi-check text-success fs-5"></i> Fachowcy po szkołach branżowych potrafią bardzo dobrze zarabiać.</li>
+                    </ul>
+
+                    <h6 class="fw-bold text-danger mt-4"><i class="bi bi-dash-circle me-1"></i> Minusy</h6>
+                    <ul class="pro-con-list small">
+                        <li><i class="bi bi-x text-danger fs-5"></i> Nie zdajesz tu matury (aby ją zdać, musisz iść potem do szkoły branżowej II stopnia).</li>
+                        <li><i class="bi bi-x text-danger fs-5"></i> Wąska specjalizacja – zmiana branży w przyszłości wymaga przekwalifikowania.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="text-center mt-5 pt-4">
+        <h4 class="fw-bold mb-3">Nie wiesz, od czego zacząć?</h4>
+        <p class="text-muted mb-4">Skorzystaj z naszego inteligentnego testu, który pomoże Ci określić Twoje predyspozycje zawodowe.</p>
+        <button class="btn btn-primary btn-lg rounded-pill px-5 shadow" onclick="document.querySelector('[data-module=\'QA.html\']').click()">
+            <i class="bi bi-patch-question me-2"></i> Przejdź do testu QA
+        </button>
+    </div>
+
+</div>

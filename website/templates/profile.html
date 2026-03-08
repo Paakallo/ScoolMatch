@@ -1,0 +1,150 @@
+<style>
+    .profile-header { background: linear-gradient(135deg, #0d6efd 0%, #0dcaf0 100%); color: white; border-radius: 15px 15px 0 0; padding: 30px; }
+    .profile-card { border-radius: 15px; border: none; box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1); }
+    .avatar-wrapper { position: relative; display: inline-block; margin-top: -50px; }
+    .avatar-preview { width: 150px; height: 150px; object-fit: cover; border: 5px solid white; background-color: #f8f9fa; }
+    .btn-upload { position: absolute; bottom: 0; right: 0; border-radius: 50%; width: 40px; height: 40px; padding: 0; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
+</style>
+
+<div class="container py-4" style="max-width: 800px;">
+    
+    <div class="card profile-card mb-4">
+        <div class="profile-header text-center">
+            <h2 class="fw-bold mb-0">Witaj w swojej bazie!</h2>
+            <p class="mb-0 text-white-50">Uzupełnij profil, byśmy mogli lepiej dopasować szkoły do Ciebie.</p>
+        </div>
+
+        <div class="card-body px-4 pb-4 text-center text-md-start">
+            <div class="row">
+                <div class="col-md-4 text-center mb-4 mb-md-0">
+                    <div class="avatar-wrapper">
+                        <img id="avatar-image" src="https://ui-avatars.com/api/?name=Uczeń&background=random&size=150" alt="Twoje zdjęcie" class="rounded-circle avatar-preview shadow-sm">
+                        
+                        <input type="file" id="image-upload" class="d-none" accept="image/png, image/jpeg, image/jpg">
+                        
+                        <button type="button" class="btn btn-primary btn-upload" id="upload-btn" title="Zmień zdjęcie">
+                            <i class="bi bi-camera-fill"></i>
+                        </button>
+                    </div>
+                    <h5 class="mt-3 fw-bold" id="display-name">Nowy Użytkownik</h5>
+                    <span class="badge bg-success rounded-pill px-3 py-2 mt-1">Ósmoklasista</span>
+                </div>
+
+                <div class="col-md-8">
+                    <form id="profile-form">
+                        <div class="row g-3">
+                            <div class="col-sm-6">
+                                <label for="firstName" class="form-label text-muted small fw-bold">Imię</label>
+                                <input type="text" class="form-control" id="firstName" placeholder="Np. Jan" required>
+                            </div>
+                            <div class="col-sm-6">
+                                <label for="lastName" class="form-label text-muted small fw-bold">Nazwisko</label>
+                                <input type="text" class="form-control" id="lastName" placeholder="Np. Kowalski" required>
+                            </div>
+                            
+                            <div class="col-sm-4">
+                                <label for="age" class="form-label text-muted small fw-bold">Wiek</label>
+                                <input type="number" class="form-control" id="age" placeholder="Np. 14" min="10" max="20">
+                            </div>
+                            <div class="col-sm-8">
+                                <label for="location" class="form-label text-muted small fw-bold">Miejscowość</label>
+                                <input type="text" class="form-control" id="location" value="Gdańsk, Nowy Port" placeholder="Wpisz miejscowość">
+                            </div>
+
+                            <div class="col-12">
+                                <label for="currentSchool" class="form-label text-muted small fw-bold">Obecna szkoła</label>
+                                <input type="text" class="form-control" id="currentSchool" placeholder="Np. Szkoła Podstawowa nr 1">
+                            </div>
+                        </div>
+
+                        <hr class="my-4">
+
+                        <div class="d-flex justify-content-between align-items-center">
+                            <button type="button" class="btn btn-outline-danger" id="reset-btn">Odrzuć zmiany</button>
+                            <button type="submit" class="btn btn-primary px-4 fw-bold shadow-sm">
+                                <i class="bi bi-save me-1"></i> Zapisz profil
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="alert alert-success d-none align-items-center shadow-sm border-0" id="success-alert" role="alert">
+        <i class="bi bi-check-circle-fill fs-4 me-3"></i>
+        <div>
+            <strong>Super!</strong> Twój profil został zaktualizowany.
+        </div>
+    </div>
+
+</div>
+
+<script>
+    (function() {
+        // Obsługa wgrywania i podglądu zdjęcia
+        const uploadBtn = document.getElementById('upload-btn');
+        const imageUpload = document.getElementById('image-upload');
+        const avatarImage = document.getElementById('avatar-image');
+
+        uploadBtn.addEventListener('click', () => {
+            imageUpload.click();
+        });
+
+        imageUpload.addEventListener('change', function() {
+            const file = this.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    avatarImage.src = e.target.result;
+                }
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // Obsługa formularza
+        const profileForm = document.getElementById('profile-form');
+        const firstNameInput = document.getElementById('firstName');
+        const lastNameInput = document.getElementById('lastName');
+        const displayName = document.getElementById('display-name');
+        const successAlert = document.getElementById('success-alert');
+        const resetBtn = document.getElementById('reset-btn');
+
+        // Funkcja do aktualizacji nazwy pod zdjęciem (łączy imię i nazwisko)
+        function updateDisplayName() {
+            const first = firstNameInput.value.trim();
+            const last = lastNameInput.value.trim();
+            
+            if (first || last) {
+                displayName.innerText = `${first} ${last}`.trim();
+            } else {
+                displayName.innerText = 'Nowy Użytkownik';
+            }
+        }
+
+        // Nasłuchiwanie zmian w polach Imię i Nazwisko
+        firstNameInput.addEventListener('input', updateDisplayName);
+        lastNameInput.addEventListener('input', updateDisplayName);
+
+        // Symulacja zapisywania danych
+        profileForm.addEventListener('submit', function(e) {
+            e.preventDefault(); 
+            
+            successAlert.classList.remove('d-none');
+            successAlert.classList.add('d-flex');
+            
+            setTimeout(() => {
+                successAlert.classList.add('d-none');
+                successAlert.classList.remove('d-flex');
+            }, 3000);
+        });
+
+        // Odrzucenie zmian (reset formularza)
+        if (resetBtn) {
+            resetBtn.addEventListener('click', () => {
+                profileForm.reset();
+                updateDisplayName(); // Przywraca domyślny napis po zresetowaniu
+            });
+        }
+    })();
+</script>
