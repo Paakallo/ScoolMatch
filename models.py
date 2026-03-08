@@ -42,6 +42,8 @@ class Wydarzenie(db.Model):
     typ = db.Column(db.String(100), nullable=False)  # np. "Konferencja", "Warsztaty"
     nazwa_wydarzenia = db.Column(db.String(255), nullable=False)
     data = db.Column(db.DateTime, nullable=False)
+    szkola = db.Column(db.String(255), nullable=True)  # Dodane: nazwa szkoły / miejsca
+    odleglosc = db.Column(db.Float, nullable=True)     # Dodane: dystans w km
 
     def __repr__(self):
         return f'<Wydarzenie {self.nazwa_wydarzenia}>'

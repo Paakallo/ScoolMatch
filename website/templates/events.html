@@ -38,17 +38,7 @@
 
 <script>
     (function() {
-        // Przykładowa baza wydarzeń (MVP na Hackathon)
-        const mockEvents = [
-            { id: 1, title: "Dni Otwarte - Profil Informatyczny", school: "Technikum Łączności nr 4 w Gdańsku", date: "2026-03-14", distance: 4.5, type: "Dni Otwarte", icon: "bi-door-open" },
-            { id: 2, title: "Warsztaty: Zbuduj swojego robota", school: "Zespół Szkół Chłodniczych i Elektronicznych", date: "2026-03-21", distance: 8.2, type: "Warsztaty", icon: "bi-tools" },
-            { id: 3, title: "Spotkanie z doradcą zawodowym", school: "Centrum Kształcenia Zawodowego", date: "2026-03-25", distance: 2.1, type: "Doradztwo", icon: "bi-person-badge" },
-            { id: 4, title: "Dzień Otwarty - Klasy mundurowe", school: "Liceum Ogólnokształcące nr VII", date: "2026-04-05", distance: 12.0, type: "Dni Otwarte", icon: "bi-shield-check" },
-            { id: 5, title: "Targi Edukacyjne Trójmiasta", school: "AmberExpo Gdańsk", date: "2026-04-10", distance: 6.5, type: "Targi", icon: "bi-mega-phone" },
-            { id: 6, title: "Poznaj szkołę morską", school: "Zespół Szkół Morskich", date: "2026-04-18", distance: 3.0, type: "Dni Otwarte", icon: "bi-water" },
-            { id: 7, title: "Dni Otwarte Technikum Leśnego", school: "Technikum Leśne (Sopot)", date: "2026-04-22", distance: 18.5, type: "Dni Otwarte", icon: "bi-tree" },
-            { id: 8, title: "Warsztaty gastronomiczne", school: "Zespół Szkół Gastronomicznych (Gdynia)", date: "2026-05-10", distance: 25.0, type: "Warsztaty", icon: "bi-cup-hot" }
-        ];
+        let allEvents = []; // Zmienna na wydarzenia z bazy danych
 
         const eventsList = document.getElementById('events-list');
         const noEventsMsg = document.getElementById('no-events-msg');
@@ -70,7 +60,7 @@
             eventsList.innerHTML = ''; // Czyszczenie listy
             
             // Filtrowanie i sortowanie po dacie (rosnąco)
-            const filteredEvents = mockEvents
+            const filteredEvents = allEvents
                 .filter(ev => ev.distance <= maxDistance)
                 .sort((a, b) => new Date(a.date) - new Date(b.date));
 
@@ -113,7 +103,23 @@
             renderEvents(currentDist);
         });
 
-        // Inicjalne renderowanie z domyślną wartością (15km)
-        renderEvents(parseFloat(distanceRange.value));
+        // Pobieranie danych z backendu (SQLite)
+        async function fetchEventsFromDatabase() {
+            eventsList.innerHTML = '<div class="text-center py-5"><div class="spinner-border text-primary" role="status"></div><p class="mt-2 text-muted">Ładowanie wydarzeń z bazy...</p></div>';
+            
+            try {
+                const response = await fetch('/api/events');
+                if (!response.ok) throw new Error("Błąd sieci");
+                
+                allEvents = await response.json();
+                renderEvents(parseFloat(distanceRange.value));
+            } catch (error) {
+                console.error("Błąd pobierania wydarzeń:", error);
+                eventsList.innerHTML = '<div class="alert alert-danger shadow-sm border-0 mt-3"><i class="bi bi-exclamation-triangle-fill me-2"></i> Nie udało się załadować wydarzeń z bazy danych.</div>';
+            }
+        }
+
+        // Inicjacja pobierania po wejściu w zakładkę
+        fetchEventsFromDatabase();
     })();
 </script>
