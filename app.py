@@ -1,10 +1,11 @@
 from flask import Flask, render_template, request, jsonify
 from models import db, School, Olimpiada, Wydarzenie, OpenDay
-from datetime import datetime
+from datetime import datetime, timedelta
+import json
 import os
 
 # Wskazujemy Flaskowi poprawny folder z szablonami
-app = Flask(__name__, template_folder='website/templates')
+app = Flask(__name__, template_folder='website/templates', static_folder='website/static')
 
 # Konfiguracja bazy danych SQLite - w głównym katalogu projektu
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///./scoolmatch.db'
@@ -73,6 +74,35 @@ def home():
         db.session.add_all(example_schools)
         db.session.commit()
 
+        if Olimpiada.query.count() == 0:
+            biologia_arkusze = [
+                {"nazwa": "Arkusz - Etap I (Szkolny)",
+                 "url": "/static/arkusz-zadan-z-biologii-stopien-i-szkolny-–-2024-2025.pdf"},
+                {"nazwa": "Model - Etap I",
+                 "url": "/static/model-odpowiedzi-do-zadan-z-biologii-stopien-i-szkolny-2024-2025.pdf"},
+                {"nazwa": "Arkusz - Etap II (Rejonowy)",
+                 "url": "/static/arkusz-zadan-z-biologii-stopien-ii-rejonowy-2024-2025.pdf"},
+                {"nazwa": "Model - Etap II",
+                 "url": "/static/model-odpowiedzi-do-zadan-z-biologii-stopien-ii-rejonowy-2024-2025.pdf"},
+                {"nazwa": "Arkusz - Etap III (Wojewódzki)",
+                 "url": "/static/arkusz-zadan-z-biologii-stopien-iiii-wojewodzki-–-2024-2025.pdf"},
+                {"nazwa": "Model - Etap III",
+                 "url": "/static/model-odpowiedzi-do-zadan-z-biologii-stopien-iii-wojewodzki-2024-2025.pdf"}
+            ]
+
+            example_olimpiady = [
+                Olimpiada(nazwa='Olimpiada Matematyczna Juniorów', data=datetime.now() + timedelta(days=30),
+                          pdf='/arkusze/omj_2024.pdf'),
+                Olimpiada(nazwa='Olimpiada Literatury i Języka Polskiego', data=datetime.now() + timedelta(days=45),
+                          pdf='/arkusze/olijp_2024.pdf'),
+                Olimpiada(nazwa='Wojewódzki Konkurs Kuratoryjny z Biologii', data=datetime.now() + timedelta(days=15),
+                          pdf=json.dumps(biologia_arkusze)),
+                Olimpiada(nazwa='Olimpiada Informatyczna Juniorów', data=datetime.now() + timedelta(days=60),
+                          pdf='/arkusze/oij_2024.pdf')
+            ]
+            db.session.add_all(example_olimpiady)
+            db.session.commit()
+
     return render_template('index.html')
 
 # Kiedy JS robi fetch('QA.html'), Flask przechwytuje to tutaj
@@ -88,6 +118,25 @@ def serve_module(module_name):
 def schools_view():
    schools = School.query.all()
    return render_template('school_view.html', schools=schools)
+
+
+@app.route('/olimpiady')
+def olimpiady_view():
+    olimpiady = Olimpiada.query.order_by(Olimpiada.data.asc()).all()
+
+    # Przetwarzamy pole pdf na łatwą w obsłudze listę
+    for olimpiada in olimpiady:
+        if olimpiada.pdf and olimpiada.pdf.startswith('['):
+            try:
+                olimpiada.arkusze_list = json.loads(olimpiada.pdf)
+            except json.JSONDecodeError:
+                olimpiada.arkusze_list = [{"nazwa": "Zobacz arkusze z poprzednich lat", "url": olimpiada.pdf}]
+        elif olimpiada.pdf:
+            olimpiada.arkusze_list = [{"nazwa": "Zobacz arkusze z poprzednich lat", "url": olimpiada.pdf}]
+        else:
+            olimpiada.arkusze_list = []
+
+    return render_template('olimpiady.html', olimpiady=olimpiady)
 
 @app.route('/get-specialties')
 def get_specialties():
