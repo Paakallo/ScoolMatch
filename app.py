@@ -195,12 +195,12 @@ def filter_schools():
         for school in schools:
             internat_badge = '<span class="badge bg-success">Internat</span>' if school.internat else '<span class="badge bg-danger">Bez internatu</span>'
             specjalnosci_html = f'<div class="small text-muted mt-2"><strong>Specjalności:</strong> {school.specjalnosci}</div>'
-            result_html += f'''<li class="list-group-item">
+            result_html += f'''<div class="school-item p-3">
                 <div class="d-flex justify-content-between align-items-start">
                     <div>
-                        <strong>{school.nazwa}</strong>
+                        <strong class="text-primary">{school.nazwa}</strong>
                         <div class="small text-muted mt-1">
-                            <span class="badge bg-secondary">{school.typ}</span>
+                            <span class="badge bg-primary">{school.typ}</span>
                             {internat_badge}
                         </div>
                         {specjalnosci_html}
@@ -209,9 +209,9 @@ def filter_schools():
                         <small class="text-muted">{school.odleglosc} km</small>
                     </div>
                 </div>
-            </li>'''
+            </div>'''
     else:
-        result_html = '<li class="list-group-item text-muted">Brak szkół spełniających kryteria.</li>'
+        result_html = '<div class="school-item p-3 text-muted">Brak szkół spełniających kryteria.</div>'
 
     return jsonify({'html': result_html})
 @app.route('/api/oblicz-wynik', methods=['POST'])
