@@ -1,58 +1,114 @@
-<div class="container py-4">
-    <h2 class="mb-4">Szkoły średnie w Gdańsku</h2>
+<style>
+    .school-card {
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+        border-radius: 12px;
+        border-left: 5px solid #0d6efd;
+    }
+    .school-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 .5rem 1rem rgba(0,0,0,.15)!important;
+    }
+    .school-icon-box {
+        width: 55px;
+        height: 55px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 12px;
+        background-color: #f8f9fa;
+        color: #0d6efd;
+        font-size: 1.8rem;
+    }
+    .filter-bar {
+        background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+        border-radius: 12px;
+    }
+</style>
 
-    <div class="d-flex justify-content-between align-items-center mb-3">
-        <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#filterModal">
-            <i class="bi bi-funnel-fill"></i> Filtruj
+<div class="container py-4" style="max-width: 900px;">
+
+    <div class="text-center mb-5">
+        <h1 class="display-5 fw-bold text-primary"><i class="bi bi-buildings"></i> Szkoły średnie w Gdańsku</h1>
+        <p class="lead text-muted">Znajdź idealną szkołę dopasowaną do Twoich zainteresowań i potrzeb.</p>
+    </div>
+
+    <div class="filter-bar d-flex justify-content-between align-items-center mb-4 p-3 shadow-sm border">
+        <span class="text-muted fw-semibold"><i class="bi bi-info-circle me-2"></i>Dostępne placówki</span>
+        <button class="btn btn-primary shadow-sm rounded-pill px-4" data-bs-toggle="modal" data-bs-target="#filterModal">
+            <i class="bi bi-funnel-fill me-1"></i> Filtruj wyniki
         </button>
     </div>
 
-    <ul class="list-group" id="schoolsList">
+    <div id="schoolsList" class="d-flex flex-column gap-3">
         {% if schools %}
             {% for school in schools %}
-            <li class="list-group-item">
-                <div class="d-flex justify-content-between align-items-start">
-                    <div>
-                        <strong>{{ school.nazwa }}</strong>
-                        <div class="small text-muted mt-1">
-                            <span class="badge bg-secondary">{{ school.typ }}</span>
-                            {% if school.internat %}
-                                <span class="badge bg-success">Internat</span>
-                            {% else %}
-                                <span class="badge bg-danger">Bez internatu</span>
-                            {% endif %}
-                            
-                            {% if school.stypendium %}
-                                <span class="badge bg-info text-dark ms-1"><i class="bi bi-cash-coin"></i> Oferuje stypendium</span>
-                            {% endif %}
+            <div class="card school-card shadow-sm border-0 mb-3">
+                <div class="card-body p-4 d-flex flex-column flex-md-row justify-content-between align-items-md-center">
+
+                    <div class="d-flex align-items-start mb-3 mb-md-0">
+                        <div class="school-icon-box me-3 flex-shrink-0 shadow-sm border">
+                            <i class="bi bi-mortarboard"></i>
                         </div>
-                        <div class="small text-muted mt-2">
-                            <strong>Specjalności:</strong> {{ school.specjalnosci }}
+                        <div>
+                            <h5 class="fw-bold mb-1 text-dark">{{ school.nazwa }}</h5>
+
+                            <div class="d-flex flex-wrap gap-2 mb-2 mt-2">
+                                <span class="badge bg-primary bg-opacity-10 text-primary border border-primary-subtle">
+                                    <i class="bi bi-tag-fill me-1"></i>{{ school.typ }}
+                                </span>
+
+                                {% if school.internat %}
+                                    <span class="badge bg-success bg-opacity-10 text-success border border-success-subtle">
+                                        <i class="bi bi-house-door-fill me-1"></i>Internat
+                                    </span>
+                                {% else %}
+                                    <span class="badge bg-secondary bg-opacity-10 text-secondary border border-secondary-subtle">
+                                        <i class="bi bi-house-x-fill me-1"></i>Bez internatu
+                                    </span>
+                                {% endif %}
+
+                                {% if school.stypendium %}
+                                    <span class="badge bg-warning bg-opacity-10 text-warning border border-warning-subtle">
+                                        <i class="bi bi-cash-coin me-1"></i>Stypendium
+                                    </span>
+                                {% endif %}
+                            </div>
+
+                            <div class="small text-muted mt-2">
+                                <strong><i class="bi bi-book me-1"></i>Specjalności:</strong> {{ school.specjalnosci }}
+                            </div>
                         </div>
                     </div>
-                    <div class="text-end">
-                        <small class="text-muted">{{ school.odleglosc }} km</small>
+
+                    <div class="text-md-end text-start mt-3 mt-md-0 ps-md-4" style="min-width: 120px;">
+                        <div class="text-muted small mb-1"><i class="bi bi-geo-alt-fill me-1"></i>Odległość</div>
+                        <div class="fs-4 fw-bold text-primary">{{ school.odleglosc }} <span class="fs-6 text-muted fw-normal">km</span></div>
                     </div>
+
                 </div>
-            </li>
+            </div>
             {% endfor %}
         {% else %}
-            <li class="list-group-item text-muted">Brak szkół do wyświetlenia. Dodaj szkoły do bazy danych.</li>
+            <div class="alert alert-info text-center border-0 shadow-sm p-4 rounded-3">
+                <i class="bi bi-search fs-3 d-block mb-2"></i>
+                Brak szkół spełniających podane kryteria.
+            </div>
         {% endif %}
-    </ul>
+    </div>
+
 </div>
 
 <div class="modal fade" id="filterModal" tabindex="-1" aria-labelledby="filterModalLabel" aria-hidden="true">
     <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="filterModalLabel">Filtruj szkoły</h5>
+        <div class="modal-content border-0 shadow">
+            <div class="modal-header bg-light">
+                <h5 class="modal-title fw-bold" id="filterModalLabel"><i class="bi bi-funnel-fill text-primary me-2"></i>Filtruj szkoły</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
                 <form id="filterForm">
                     <div class="mb-3">
-                        <label for="typeFilter" class="form-label">Rodzaj szkoły</label>
+                        <label for="typeFilter" class="form-label text-muted small fw-bold">RODZAJ SZKOŁY</label>
                         <select class="form-select" id="typeFilter" name="type">
                             <option value="">Wszystkie</option>
                             <option value="Liceum">Liceum</option>
@@ -60,10 +116,10 @@
                             <option value="Szkoła zawodowa">Szkoła zawodowa</option>
                         </select>
                     </div>
-                    
+
                     <div class="row mb-3">
                         <div class="col-6">
-                            <label for="dormitoryFilter" class="form-label">Internat</label>
+                            <label for="dormitoryFilter" class="form-label text-muted small fw-bold">INTERNAT</label>
                             <select class="form-select" id="dormitoryFilter" name="dormitory">
                                 <option value="">Wszystko</option>
                                 <option value="Tak">Tak</option>
@@ -71,7 +127,7 @@
                             </select>
                         </div>
                         <div class="col-6">
-                            <label for="scholarshipFilter" class="form-label">Stypendium</label>
+                            <label for="scholarshipFilter" class="form-label text-muted small fw-bold">STYPENDIUM</label>
                             <select class="form-select" id="scholarshipFilter" name="scholarship">
                                 <option value="">Wszystko</option>
                                 <option value="Tak">Wymagane</option>
@@ -79,23 +135,24 @@
                         </div>
                     </div>
 
-                    <div class="mb-3">
-                        <label class="form-label">Specjalności</label>
-                        <button type="button" class="btn btn-outline-secondary w-100" id="specialtyButton" onclick="toggleSpecialties()">
-                            Wybierz specjalności
+                    <div class="mb-4">
+                        <label class="form-label text-muted small fw-bold">SPECJALNOŚCI</label>
+                        <button type="button" class="btn btn-outline-primary w-100" id="specialtyButton" onclick="toggleSpecialties()">
+                            <i class="bi bi-list-check me-1"></i> Wybierz specjalności
                         </button>
-                        <div id="specialtyList" class="mt-2" style="display: none; max-height: 200px; overflow-y: auto;">
-                            </div>
+                        <div id="specialtyList" class="mt-2 p-2 border rounded bg-light" style="display: none; max-height: 200px; overflow-y: auto;">
+                        </div>
                     </div>
-                    <div class="mb-3">
-                        <label for="distanceFilter" class="form-label">Odległość od centrum Gdańska (km): <span id="distanceValue">10</span></label>
+
+                    <div class="mb-2">
+                        <label for="distanceFilter" class="form-label text-muted small fw-bold">MAKSYMALNA ODLEGŁOŚĆ: <span id="distanceValue" class="text-primary fs-5">10</span> km</label>
                         <input type="range" class="form-range" id="distanceFilter" name="distance" min="0" max="50" value="10" step="1" oninput="updateDistanceValue(this.value)">
                     </div>
                 </form>
             </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Anuluj</button>
-                <button type="button" class="btn btn-primary" onclick="applyFilters()">Zastosuj</button>
+            <div class="modal-footer bg-light border-top-0">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Anuluj</button>
+                <button type="button" class="btn btn-primary px-4" onclick="applyFilters()">Zastosuj filtry</button>
             </div>
         </div>
     </div>
@@ -120,7 +177,7 @@
             type: document.getElementById('typeFilter').value,
             specialties: selectedSpecialties,
             dormitory: document.getElementById('dormitoryFilter').value,
-            scholarship: document.getElementById('scholarshipFilter').value, // Pobieramy wartość filtra stypendium
+            scholarship: document.getElementById('scholarshipFilter').value,
             distance: document.getElementById('distanceFilter').value
         };
 
@@ -158,7 +215,7 @@
                     specialtyList.innerHTML = '';
                     data.specialties.forEach(specialty => {
                         const div = document.createElement('div');
-                        div.className = 'form-check';
+                        div.className = 'form-check mb-1';
                         div.innerHTML = `
                             <input class="form-check-input" type="checkbox" value="${specialty}" id="specialty_${specialty}">
                             <label class="form-check-label" for="specialty_${specialty}">
