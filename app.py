@@ -74,7 +74,7 @@ def home():
         db.session.add_all(example_schools)
         db.session.commit()
 
-     if Olimpiada.query.count() == 0:
+    if Olimpiada.query.count() == 0:
         biologia_arkusze = [
             {"nazwa": "Arkusz - Etap I (Szkolny)",
              "url": "/static/arkusz-zadan-z-biologii-stopien-i-szkolny-–-2024-2025.pdf"},
