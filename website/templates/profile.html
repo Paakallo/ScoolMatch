@@ -76,6 +76,34 @@
         <div><strong>Super!</strong> Twój profil został zaktualizowany.</div>
     </div>
 
+    <div class="card profile-card mb-4 border-primary border-top border-4">
+        <div class="card-body p-4">
+            <h4 class="fw-bold mb-3 text-dark">
+                <i class="bi bi-patch-check-fill text-primary me-2"></i> Twoje predyspozycje (Test)
+            </h4>
+            
+            <div id="qa-result-container" class="d-none">
+                <div class="alert alert-primary bg-primary bg-opacity-10 border-0 mb-0">
+                    <div class="d-flex justify-content-between align-items-start mb-2">
+                        <h5 class="fw-bold text-primary mb-0" id="profile-qa-title"></h5>
+                        <span class="badge bg-primary" id="profile-qa-score"></span>
+                    </div>
+                    <p class="mb-2 small text-dark" id="profile-qa-desc"></p>
+                    <hr class="border-primary opacity-25">
+                    <p class="mb-2 small"><strong><i class="bi bi-briefcase me-1"></i> Polecane zawody:</strong> <span id="profile-qa-jobs"></span></p>
+                    <button class="btn btn-sm btn-outline-primary mt-2" onclick="document.querySelector('[data-module=\'QA.html\']').click()">Zrób test ponownie</button>
+                </div>
+            </div>
+
+            <div id="qa-no-result" class="text-center py-3">
+                <p class="text-muted mb-3">Jeszcze nie rozwiązałeś testu predyspozycji. Dowiedz się, jaka ścieżka do Ciebie pasuje!</p>
+                <button class="btn btn-primary shadow-sm" onclick="document.querySelector('[data-module=\'QA.html\']').click()">
+                    Rozwiąż test teraz
+                </button>
+            </div>
+        </div>
+    </div>
+
     <div class="card profile-card mb-4">
         <div class="card-body p-4">
             <h4 class="fw-bold mb-4 text-dark">
@@ -83,7 +111,7 @@
             </h4>
             
             <div id="saved-events-container" class="list-group list-group-flush border-top border-bottom">
-                </div>
+            </div>
             
             <div id="no-saved-events" class="text-center py-4 d-none text-muted">
                 <i class="bi bi-calendar-x fs-1 opacity-50"></i>
@@ -142,7 +170,7 @@
                 const reader = new FileReader();
                 reader.onload = function(e) {
                     avatarImage.src = e.target.result;
-                    localStorage.setItem('sm_avatar', e.target.result); // Zapisujemy zdjęcie w pamięci!
+                    localStorage.setItem('sm_avatar', e.target.result);
                 }
                 reader.readAsDataURL(file);
             }
@@ -197,23 +225,46 @@
                     savedEventsContainer.appendChild(item);
                 });
 
-                // Obsługa usuwania wydarzeń z poziomu profilu
                 document.querySelectorAll('.remove-event-btn').forEach(btn => {
                     btn.addEventListener('click', function() {
                         const evId = parseInt(this.getAttribute('data-id'));
                         let currentSaved = JSON.parse(localStorage.getItem('sm_saved_events')) || [];
                         currentSaved = currentSaved.filter(e => e.id !== evId);
                         localStorage.setItem('sm_saved_events', JSON.stringify(currentSaved));
-                        
-                        // Przeładowujemy listę
                         renderSavedEvents();
                     });
                 });
             }
         }
 
+        // --- 3. LOGIKA WYNIKÓW TESTU QA ---
+        function loadQAResult() {
+            const qaDataStr = localStorage.getItem('sm_qa_result');
+            const resultContainer = document.getElementById('qa-result-container');
+            const noResultContainer = document.getElementById('qa-no-result');
+
+            if (qaDataStr) {
+                const qaData = JSON.parse(qaDataStr);
+                
+                // Wypełniamy dane
+                document.getElementById('profile-qa-title').innerText = qaData.nazwa;
+                document.getElementById('profile-qa-score').innerText = `${qaData.score} pkt`;
+                document.getElementById('profile-qa-desc').innerText = qaData.opis;
+                document.getElementById('profile-qa-jobs').innerText = qaData.zawody;
+
+                // Pokazujemy kontener z wynikami, ukrywamy zachętę
+                resultContainer.classList.remove('d-none');
+                noResultContainer.classList.add('d-none');
+            } else {
+                // Jeśli brak wyników, pokazujemy tylko zachętę
+                resultContainer.classList.add('d-none');
+                noResultContainer.classList.remove('d-none');
+            }
+        }
+
         // Inicjalizacja przy wejściu w profil
         loadSavedProfile();
         renderSavedEvents();
+        loadQAResult();
     })();
 </script>

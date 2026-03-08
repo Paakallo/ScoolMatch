@@ -149,6 +149,14 @@
 
                 const result = await response.json();
 
+                // NOWE: Zapisujemy wynik do pamięci przeglądarki (profilu)
+                localStorage.setItem('sm_qa_result', JSON.stringify({
+                    nazwa: result.details.nazwa,
+                    score: result.score,
+                    opis: result.details.opis,
+                    zawody: result.details.zawody
+                }));
+
                 // Ukrywamy test i pokazujemy wyniki
                 document.getElementById('test-view').classList.add('d-none');
                 document.getElementById('result-view').classList.remove('d-none');
