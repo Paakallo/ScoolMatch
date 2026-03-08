@@ -1,14 +1,12 @@
 <div class="container py-4">
     <h2 class="mb-4">Szkoły średnie w Gdańsku</h2>
 
-    <!-- Przycisk filtrowania -->
     <div class="d-flex justify-content-between align-items-center mb-3">
         <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#filterModal">
             <i class="bi bi-funnel-fill"></i> Filtruj
         </button>
     </div>
 
-    <!-- Lista szkół -->
     <ul class="list-group" id="schoolsList">
         {% if schools %}
             {% for school in schools %}
@@ -22,6 +20,10 @@
                                 <span class="badge bg-success">Internat</span>
                             {% else %}
                                 <span class="badge bg-danger">Bez internatu</span>
+                            {% endif %}
+                            
+                            {% if school.stypendium %}
+                                <span class="badge bg-info text-dark ms-1"><i class="bi bi-cash-coin"></i> Oferuje stypendium</span>
                             {% endif %}
                         </div>
                         <div class="small text-muted mt-2">
@@ -40,7 +42,6 @@
     </ul>
 </div>
 
-<!-- Modal filtrowania -->
 <div class="modal fade" id="filterModal" tabindex="-1" aria-labelledby="filterModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -59,22 +60,32 @@
                             <option value="Szkoła zawodowa">Szkoła zawodowa</option>
                         </select>
                     </div>
-                    <div class="mb-3">
-                        <label for="dormitoryFilter" class="form-label">Szkoła z internatem</label>
-                        <select class="form-select" id="dormitoryFilter" name="dormitory">
-                            <option value="">Wszystkie</option>
-                            <option value="Tak">Tak</option>
-                            <option value="Nie">Nie</option>
-                        </select>
+                    
+                    <div class="row mb-3">
+                        <div class="col-6">
+                            <label for="dormitoryFilter" class="form-label">Internat</label>
+                            <select class="form-select" id="dormitoryFilter" name="dormitory">
+                                <option value="">Wszystko</option>
+                                <option value="Tak">Tak</option>
+                                <option value="Nie">Nie</option>
+                            </select>
+                        </div>
+                        <div class="col-6">
+                            <label for="scholarshipFilter" class="form-label">Stypendium</label>
+                            <select class="form-select" id="scholarshipFilter" name="scholarship">
+                                <option value="">Wszystko</option>
+                                <option value="Tak">Wymagane</option>
+                            </select>
+                        </div>
                     </div>
+
                     <div class="mb-3">
                         <label class="form-label">Specjalności</label>
                         <button type="button" class="btn btn-outline-secondary w-100" id="specialtyButton" onclick="toggleSpecialties()">
                             Wybierz specjalności
                         </button>
                         <div id="specialtyList" class="mt-2" style="display: none; max-height: 200px; overflow-y: auto;">
-                            <!-- Specjalności będą ładowane dynamicznie -->
-                        </div>
+                            </div>
                     </div>
                     <div class="mb-3">
                         <label for="distanceFilter" class="form-label">Odległość od centrum Gdańska (km): <span id="distanceValue">10</span></label>
@@ -109,6 +120,7 @@
             type: document.getElementById('typeFilter').value,
             specialties: selectedSpecialties,
             dormitory: document.getElementById('dormitoryFilter').value,
+            scholarship: document.getElementById('scholarshipFilter').value, // Pobieramy wartość filtra stypendium
             distance: document.getElementById('distanceFilter').value
         };
 

@@ -13,6 +13,7 @@ class School(db.Model):
     typ = db.Column(db.String(100), nullable=True)  # Liceum, Technikum, Szkoła zawodowa
     internat = db.Column(db.Boolean, default=False)  # Czy szkoła ma internat
     odleglosc = db.Column(db.Float, nullable=True)  # Odległość od centrum Gdańska (km)
+    stypendium = db.Column(db.Boolean, default=False) # NOWE POLE: Czy szkoła oferuje stypendium?
 
     # Relacje
     open_days = db.relationship('OpenDay', backref='school', lazy=True)

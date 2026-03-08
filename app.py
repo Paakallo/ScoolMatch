@@ -59,16 +59,16 @@ def home():
     # Dodajemy przykładowe dane, jeśli baza jest pusta
     if School.query.count() == 0:
         example_schools = [
-            School(nazwa='I Liceum Ogólnokształcące im. Adama Mickiewicza', lokalizacja='Śródmieście', specjalnosci='Matematyka, Fizyka, Historia', typ='Liceum', internat=True, odleglosc=2.5),
-            School(nazwa='II Liceum Ogólnokształcące im. Króla Stanisława Leszczyńskiego', lokalizacja='Wrzeszcz', specjalnosci='Języki obce, Literatura', typ='Liceum', internat=False, odleglosc=4.2),
-            School(nazwa='III Liceum Ogólnokształcące', lokalizacja='Oliwa', specjalnosci='Biologia, Chemia', typ='Liceum', internat=False, odleglosc=8.5),
-            School(nazwa='Technikum Elektroniczne im. Józefa Marii Fitelberga', lokalizacja='Śródmieście', specjalnosci='Elektronika, Robotyka', typ='Technikum', internat=True, odleglosc=2.8),
-            School(nazwa='Technikum Informacyjne', lokalizacja='Wrzeszcz', specjalnosci='Programowanie, Sieci komputerowe', typ='Technikum', internat=False, odleglosc=4.5),
-            School(nazwa='Szkoła Zawodowa nr 1', lokalizacja='Oliwa', specjalnosci='Automechanika, Elektyka', typ='Szkoła zawodowa', internat=False, odleglosc=8.0),
-            School(nazwa='IV Liceum Ogólnokształcące', lokalizacja='Kokoszki', specjalnosci='Ekonomia, Zarządzanie', typ='Liceum', internat=False, odleglosc=6.3),
-            School(nazwa='Technikum Mechaniczne', lokalizacja='Śródmieście', specjalnosci='Budowa maszyn, CNC', typ='Technikum', internat=True, odleglosc=3.1),
-            School(nazwa='Szkoła Zawodowa nr 2', lokalizacja='Wrzeszcz', specjalnosci='Kosmetyka, Fryzjerstwo', typ='Szkoła zawodowa', internat=False, odleglosc=4.0),
-            School(nazwa='V Liceum Ogólnokształcące', lokalizacja='Przymorze', specjalnosci='Sztuka, Muzyka, Historia', typ='Liceum', internat=True, odleglosc=7.2),
+            School(nazwa='I Liceum Ogólnokształcące im. Adama Mickiewicza', lokalizacja='Śródmieście', specjalnosci='Matematyka, Fizyka, Historia', typ='Liceum', internat=True, odleglosc=2.5, stypendium=True),
+            School(nazwa='II Liceum Ogólnokształcące im. Króla Stanisława Leszczyńskiego', lokalizacja='Wrzeszcz', specjalnosci='Języki obce, Literatura', typ='Liceum', internat=False, odleglosc=4.2, stypendium=False),
+            School(nazwa='III Liceum Ogólnokształcące', lokalizacja='Oliwa', specjalnosci='Biologia, Chemia', typ='Liceum', internat=False, odleglosc=8.5, stypendium=True),
+            School(nazwa='Technikum Elektroniczne im. Józefa Marii Fitelberga', lokalizacja='Śródmieście', specjalnosci='Elektronika, Robotyka', typ='Technikum', internat=True, odleglosc=2.8, stypendium=True),
+            School(nazwa='Technikum Informacyjne', lokalizacja='Wrzeszcz', specjalnosci='Programowanie, Sieci komputerowe', typ='Technikum', internat=False, odleglosc=4.5, stypendium=False),
+            School(nazwa='Szkoła Zawodowa nr 1', lokalizacja='Oliwa', specjalnosci='Automechanika, Elektyka', typ='Szkoła zawodowa', internat=False, odleglosc=8.0, stypendium=True),
+            School(nazwa='IV Liceum Ogólnokształcące', lokalizacja='Kokoszki', specjalnosci='Ekonomia, Zarządzanie', typ='Liceum', internat=False, odleglosc=6.3, stypendium=False),
+            School(nazwa='Technikum Mechaniczne', lokalizacja='Śródmieście', specjalnosci='Budowa maszyn, CNC', typ='Technikum', internat=True, odleglosc=3.1, stypendium=True),
+            School(nazwa='Szkoła Zawodowa nr 2', lokalizacja='Wrzeszcz', specjalnosci='Kosmetyka, Fryzjerstwo', typ='Szkoła zawodowa', internat=False, odleglosc=4.0, stypendium=False),
+            School(nazwa='V Liceum Ogólnokształcące', lokalizacja='Przymorze', specjalnosci='Sztuka, Muzyka, Historia', typ='Liceum', internat=True, odleglosc=7.2, stypendium=True),
         ]
         db.session.add_all(example_schools)
         db.session.commit()
@@ -155,6 +155,7 @@ def filter_schools():
     school_type = data.get('type', '')
     specialties = data.get('specialties', [])
     has_dorm = data.get('dormitory', '')
+    has_scholarship = data.get('scholarship', '') # NOWY PARAMETR
     max_distance = data.get('distance', 50)
 
     # Budujemy zapytanie
@@ -180,6 +181,12 @@ def filter_schools():
     elif has_dorm == 'Nie':
         query = query.filter_by(internat=False)
 
+    # NOWE: Filtrowanie po stypendium
+    if has_scholarship == 'Tak':
+        query = query.filter_by(stypendium=True)
+    elif has_scholarship == 'Nie':
+        query = query.filter_by(stypendium=False)
+
     # Filtrowanie po odległości
     try:
         max_distance = float(max_distance)
@@ -194,6 +201,9 @@ def filter_schools():
     if schools:
         for school in schools:
             internat_badge = '<span class="badge bg-success">Internat</span>' if school.internat else '<span class="badge bg-danger">Bez internatu</span>'
+            # Dodajemy plakietkę stypendium
+            stypendium_badge = '<span class="badge bg-info text-dark ms-1"><i class="bi bi-cash-coin"></i> Oferuje stypendium</span>' if school.stypendium else ''
+            
             specjalnosci_html = f'<div class="small text-muted mt-2"><strong>Specjalności:</strong> {school.specjalnosci}</div>'
             result_html += f'''<li class="list-group-item">
                 <div class="d-flex justify-content-between align-items-start">
@@ -202,6 +212,7 @@ def filter_schools():
                         <div class="small text-muted mt-1">
                             <span class="badge bg-secondary">{school.typ}</span>
                             {internat_badge}
+                            {stypendium_badge}
                         </div>
                         {specjalnosci_html}
                     </div>
@@ -214,6 +225,7 @@ def filter_schools():
         result_html = '<li class="list-group-item text-muted">Brak szkół spełniających kryteria.</li>'
 
     return jsonify({'html': result_html})
+
 @app.route('/api/oblicz-wynik', methods=['POST'])
 def oblicz_wynik():
     # Pobranie danych JSON wysłanych z frontendu
