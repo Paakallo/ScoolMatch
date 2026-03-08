@@ -86,8 +86,151 @@
         <h4 class="fw-bold mb-3">Chcesz spróbować swoich sił?</h4>
         <p class="text-muted mb-4">Przygotowania warto zacząć już w 7 klasie. Sprawdź kalendarz konkursów w swoim województwie lub zapoznaj się z harmonogramem ogólnopolskim.</p>
 
-        <button class="btn btn-outline-primary me-2 mb-2"><i class="bi bi-search me-1"></i> Znajdź konkurs dla siebie</button>
-        <button class="btn btn-outline-success mb-2"><i class="bi bi-book me-1"></i> Zobacz bazy starych arkuszy</button>
+        <button id="toggle-competitions-btn" class="btn btn-primary"><i class="bi bi-search me-1"></i> Znajdź konkurs dla siebie</button>
+    </div>
+
+    <div id="competitions-list" class="mt-4" style="display: none;">
+        <h3 class="fw-bold mb-4 text-center">Nadchodzące konkursy i olimpiady</h3>
+
+        <div class="card mb-4 border-0 shadow-sm bg-light" id="date-filter-panel">
+            <div class="card-body">
+                <h5 class="card-title mb-3 fs-6 fw-bold"><i class="bi bi-funnel me-2"></i>Filtruj konkursy po dacie</h5>
+                <div class="row g-3 align-items-end">
+                    <div class="col-md-4">
+                        <label for="date-from" class="form-label text-muted small mb-1">Od daty:</label>
+                        <input type="date" id="date-from" class="form-control form-control-sm">
+                    </div>
+                    <div class="col-md-4">
+                        <label for="date-to" class="form-label text-muted small mb-1">Do daty:</label>
+                        <input type="date" id="date-to" class="form-control form-control-sm">
+                    </div>
+                    <div class="col-md-4 d-flex gap-2">
+                        <button id="filter-dates-btn" class="btn btn-primary btn-sm flex-grow-1">Zastosuj</button>
+                        <button id="clear-dates-btn" class="btn btn-outline-secondary btn-sm">Wyczyść</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row g-3">
+            {% if olimpiady %}
+                {% for olimpiada in olimpiady %}
+                <div class="col-12 olympiad-item" data-date="{{ olimpiada.data.strftime('%Y-%m-%d') }}">
+                    <div class="card shadow-sm border-0 border-start border-4 border-primary">
+                        <div class="card-body d-flex flex-column flex-md-row justify-content-between align-items-center p-3">
+                            <div class="mb-3 mb-md-0 text-center text-md-start">
+                                <h5 class="fw-bold mb-1">{{ olimpiada.nazwa }}</h5>
+                                <p class="text-muted mb-0">
+                                    <i class="bi bi-calendar-event text-primary me-1"></i>
+                                    {{ olimpiada.data.strftime('%d.%m.%Y') }}
+                                </p>
+                            </div>
+                            <div>
+                            {% if olimpiada.arkusze_list|length > 1 %}
+                                <div class="dropdown">
+                                    <button class="btn btn-outline-success btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                        <i class="bi bi-file-earmark-pdf me-1"></i> Pobierz arkusze i modele
+                                    </button>
+                                    <ul class="dropdown-menu">
+                                        {% for plik in olimpiada.arkusze_list %}
+                                            <li><a class="dropdown-item" href="{{ plik.url }}" target="_blank">{{ plik.nazwa }}</a></li>
+                                        {% endfor %}
+                                    </ul>
+                                </div>
+                            {% elif olimpiada.arkusze_list|length == 1 %}
+                                <a href="{{ olimpiada.arkusze_list[0].url }}" class="btn btn-outline-success btn-sm" target="_blank">
+                                    <i class="bi bi-file-earmark-pdf me-1"></i> {{ olimpiada.arkusze_list[0].nazwa }}
+                                </a>
+                            {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <div class="col-12">
+                    <div class="alert alert-info text-center border-0 shadow-sm">
+                        Brak zaplanowanych konkursów w tym momencie.
+                    </div>
+                </div>
+            {% endif %}
+
+            <div id="no-results-msg" class="col-12" style="display: none;">
+                <div class="alert alert-warning text-center border-0 shadow-sm">
+                    <i class="bi bi-info-circle me-2"></i>Brak konkursów we wskazanym przedziale czasowym.
+                </div>
+            </div>
+
+        </div>
     </div>
 
 </div>
+
+<script>
+    // Rozwijanie / zwijanie listy
+    document.getElementById('toggle-competitions-btn').addEventListener('click', function() {
+        const listDiv = document.getElementById('competitions-list');
+        const isHidden = listDiv.style.display === 'none';
+
+        if (isHidden) {
+            listDiv.style.display = 'block';
+            this.innerHTML = '<i class="bi bi-chevron-up me-1"></i> Ukryj listę konkursów';
+            this.classList.replace('btn-primary', 'btn-outline-primary');
+        } else {
+            listDiv.style.display = 'none';
+            this.innerHTML = '<i class="bi bi-search me-1"></i> Znajdź konkurs dla siebie';
+            this.classList.replace('btn-outline-primary', 'btn-primary');
+        }
+    });
+
+    // Filtrowanie po dacie
+    document.getElementById('filter-dates-btn').addEventListener('click', function() {
+        const dateFrom = document.getElementById('date-from').value;
+        const dateTo = document.getElementById('date-to').value;
+
+        const items = document.querySelectorAll('.olympiad-item');
+        const noResultsMsg = document.getElementById('no-results-msg');
+        let visibleCount = 0;
+
+        items.forEach(item => {
+            const itemDate = item.getAttribute('data-date');
+            let shouldShow = true;
+
+            // Logika sprawdzania
+            if (dateFrom && itemDate < dateFrom) {
+                shouldShow = false;
+            }
+            if (dateTo && itemDate > dateTo) {
+                shouldShow = false;
+            }
+
+            // Aplikowanie styli
+            if (shouldShow) {
+                item.style.display = 'block';
+                visibleCount++;
+            } else {
+                item.style.display = 'none';
+            }
+        });
+
+        // Pokaż komunikat o braku wyników, jeśli nic nie pasuje do filtrów
+        if (visibleCount === 0 && items.length > 0) {
+            noResultsMsg.style.display = 'block';
+        } else {
+            noResultsMsg.style.display = 'none';
+        }
+    });
+
+    // Czyszczenie filtrów
+    document.getElementById('clear-dates-btn').addEventListener('click', function() {
+        document.getElementById('date-from').value = '';
+        document.getElementById('date-to').value = '';
+
+        const items = document.querySelectorAll('.olympiad-item');
+        items.forEach(item => {
+            item.style.display = 'block';
+        });
+
+        document.getElementById('no-results-msg').style.display = 'none';
+    });
+</script>

@@ -136,6 +136,8 @@
             let fetchUrl = url;
             if (url === 'school_view.html') {
                 fetchUrl = '/schools';
+            } else if (url === 'olimpiady.html') {
+                fetchUrl = '/olimpiady';
             }
 
             fetch(fetchUrl)
