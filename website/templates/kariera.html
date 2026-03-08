@@ -16,11 +16,12 @@
         margin-bottom: 2rem;
         font-weight: bold;
     }
-    .carousel-item iframe {
+    .carousel-item iframe, .carousel-item video {
         width: 100%;
         height: 315px;
         border: none;
         border-radius: 10px;
+        background-color: #000;
     }
     .carousel-control-prev, .carousel-control-next {
         width: 5%;
@@ -29,11 +30,12 @@
         background-color: rgba(13, 110, 253, 0.8);
         border-radius: 10px;
     }
-    .grid-view iframe {
+    .grid-view iframe, .grid-view video {
         width: 100%;
         height: 200px;
         border: none;
         border-radius: 10px;
+        background-color: #000;
     }
     .grid-view .card {
         margin-bottom: 1rem;
@@ -78,10 +80,14 @@
                 <div id="absolwenciCarousel" class="carousel slide" data-bs-ride="carousel">
                     <div class="carousel-inner">
                         <div class="carousel-item active">
-                            <iframe src="https://www.youtube.com/embed/dQw4w9WgXcQ" allowfullscreen></iframe>
+                            <video controls>
+                                <source src="/static/output.mov" type="video/quicktime">
+                                <source src="/static/wideo_chrome.mp4" type="video/mp4">
+                                Twoja przeglądarka nie obsługuje odtwarzacza wideo.
+                            </video>
                             <div class="carousel-caption d-none d-md-block">
-                                <h5>Film absolwenta 1</h5>
-                                <p>Opis filmu absolwenta.</p>
+                                <h5>Film naszego absolwenta</h5>
+                                <p>Poznaj historię sukcesu w branży IT.</p>
                             </div>
                         </div>
                         <div class="carousel-item">
@@ -122,10 +128,12 @@
                     </div>
                     <div class="col-md-4">
                         <div class="card">
-                            <iframe src="https://www.youtube.com/embed/dQw4w9WgXcQ" allowfullscreen></iframe>
+                            <video controls>
+                                <source src="/static/wideo_chrome.mp4" type="video/mp4">
+                            </video>
                             <div class="card-body">
-                                <h6 class="card-title">Film absolwenta 2</h6>
-                                <p class="card-text small">Opis filmu absolwenta.</p>
+                                <h6 class="card-title">Film naszego absolwenta</h6>
+                                <p class="card-text small">Poznaj historię sukcesu w branży IT.</p>
                             </div>
                         </div>
                     </div>
