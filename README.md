@@ -1,0 +1,1 @@
+The goal of this web app is to help young students from marginalized communities choose their future schools based on their interests and predispositions. And if they don't have any, there is an option to complete a quiz or to talk to school and industry representatives. 
